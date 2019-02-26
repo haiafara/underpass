@@ -14,7 +14,7 @@ require 'juwelier'
 Juwelier::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://guides.rubygems.org/specification-reference/ for more options
   gem.name = "underpass"
-  gem.homepage = "http://github.com/janosrusiczki/underpass"
+  gem.homepage = "http://github.com/haiafara/underpass"
   gem.license = "MIT"
   gem.summary = %Q{A library that makes it easy to translate Overpass API responses into RGeo objects}
   gem.description = %Q{TODO: longer description of your gem}
