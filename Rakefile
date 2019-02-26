@@ -16,7 +16,7 @@ Juwelier::Tasks.new do |gem|
   gem.name = "underpass"
   gem.homepage = "http://github.com/janosrusiczki/underpass"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
+  gem.summary = %Q{A library that makes it easy to translate Overpass API responses into RGeo objects}
   gem.description = %Q{TODO: longer description of your gem}
   gem.email = "janos.rusiczki@gmail.com"
   gem.authors = ["Janos Rusiczki"]
