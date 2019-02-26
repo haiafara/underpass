@@ -16,10 +16,12 @@ Juwelier::Tasks.new do |gem|
   gem.name = "underpass"
   gem.homepage = "http://github.com/haiafara/underpass"
   gem.license = "MIT"
-  gem.summary = %Q{A library that makes it easy to translate Overpass API responses into RGeo objects}
+  gem.summary = %Q{A library that translates Overpass API responses into RGeo objects}
   gem.description = %Q{TODO: longer description of your gem}
   gem.email = "janos.rusiczki@gmail.com"
   gem.authors = ["Janos Rusiczki"]
+
+  gem.add_dependency 'rgeo'
 
   # dependencies defined in Gemfile
 end

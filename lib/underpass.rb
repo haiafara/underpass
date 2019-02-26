@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'rgeo'
+
 require 'underpass/ql/ql'
 
 # The Underpass library
