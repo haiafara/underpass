@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rgeo'
+require 'json'
 
 require 'underpass/ql/ql'
 
