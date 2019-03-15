@@ -10,7 +10,11 @@ group :development do
   gem "rdoc", "~> 3.12"
   gem "bundler", "~> 1.0"
   gem "juwelier", "~> 2.1.0"
+end
+
+group :test do
   gem 'simplecov', require: false
+  gem 'webmock'
 end
 
 gem 'rgeo'
