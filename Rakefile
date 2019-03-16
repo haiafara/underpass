@@ -1,49 +1,7 @@
-require 'rubygems'
-require 'bundler'
-begin
-  Bundler.setup(:default, :development)
-rescue Bundler::BundlerError => e
-  warn e.message
-  warn 'Run `bundle install` to install missing gems'
-  exit e.status_code
-end
-require 'rake'
-require 'juwelier'
-Juwelier::Tasks.new do |gem|
-  # gem is a Gem::Specification... see http://guides.rubygems.org/specification-reference/ for more options
-  gem.name = 'underpass'
-  gem.homepage = 'http://github.com/haiafara/underpass'
-  gem.license = 'MIT'
-  gem.summary = %(A library that translates Overpass API responses into RGeo objects)
-  gem.description = %(TODO: longer description of your gem)
-  gem.email = 'janos.rusiczki@gmail.com'
-  gem.authors = ['Janos Rusiczki']
-
-  gem.add_dependency 'rgeo'
-
-  # dependencies defined in Gemfile
-end
-Juwelier::RubygemsDotOrgTasks.new
 require 'rspec/core'
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:spec) do |spec|
   spec.pattern = FileList['spec/**/*_spec.rb']
 end
 
-desc 'Code coverage detail'
-task :simplecov do
-  ENV['COVERAGE'] = 'true'
-  Rake::Task['test'].execute
-end
-
 task default: :spec
-
-require 'rdoc/task'
-Rake::RDocTask.new do |rdoc|
-  version = File.exist?('VERSION') ? File.read('VERSION') : ''
-
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "underpass #{version}"
-  rdoc.rdoc_files.include('README*')
-  rdoc.rdoc_files.include('lib/**/*.rb')
-end
