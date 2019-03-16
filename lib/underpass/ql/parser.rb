@@ -30,14 +30,14 @@ module Underpass
 
       private
 
-      def extract_indexed_ways(elements)
-        ways = elements.select { |e| e[:type] == 'way' }
-        ways.map { |e| [e[:id], e] }.to_h
-      end
-
       def extract_indexed_nodes(elements)
         nodes = elements.select { |e| e[:type] == 'node' }
         nodes.map { |e| [e[:id], e] }.to_h
+      end
+
+      def extract_indexed_ways(elements)
+        ways = elements.select { |e| e[:type] == 'way' }
+        ways.map { |e| [e[:id], e] }.to_h
       end
     end
   end
