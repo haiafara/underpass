@@ -5,8 +5,8 @@ require 'json'
 
 require 'underpass/ql/ql'
 
-# The Underpass library
-# Offers various helpers to work with the Overpass API and RGeo objects
+# Underpass is a library that makes it easy to query the Overpass API
+# and translate its responses into RGeo objects
 module Underpass
 end
 

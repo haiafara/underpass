@@ -2,7 +2,7 @@
 
 module Underpass
   module QL
-    # Deals with performing the Overpass API request.
+    # Deals with performing the Overpass API request
     class Request
       API_URI = 'https://overpass-api.de/api/interpreter'.freeze
       QUERY_TEMPLATE = <<-TEMPLATE.freeze
@@ -20,6 +20,7 @@ module Underpass
         @global_bbox ||= "[#{bbox}]"
       end
 
+      # Performs the API request
       def run
         query = QUERY_TEMPLATE.sub('BBOX', @global_bbox)
                               .sub('QUERY', @overpass_query)

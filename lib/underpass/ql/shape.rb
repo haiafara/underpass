@@ -2,7 +2,8 @@
 
 module Underpass
   module QL
-    # Contains factories for various shapes from ways and nodes.
+    # Contains factories for various RGeo shapes from ways and nodes parsed
+    # with the Parser class
     class Shape
       def self.polygon_from_way(way, nodes)
         f = RGeo::Geographic.spherical_factory(srid: 4326)

@@ -4,7 +4,7 @@ module Underpass
   module QL
     # Bounding box related utilities.
     class BoundingBox
-      # returns the Overpass query language bounding box string
+      # Returns the Overpass query language bounding box string
       # when provided with an RGeo geometry
       def self.from_geometry(geometry)
         r_bb = RGeo::Cartesian::BoundingBox.create_from_geometry(geometry)

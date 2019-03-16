@@ -2,8 +2,8 @@
 
 module Underpass
   module QL
-    # Parses the API request response into easily digestable objects
-    # which are then returned as matches.
+    # Deals with parsing the API request response into easily digestable objects
+    # which are then returned as matches
     class Parser
       def initialize(response)
         @response = response
