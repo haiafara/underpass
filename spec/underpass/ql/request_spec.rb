@@ -5,7 +5,7 @@ require 'underpass'
 
 describe Underpass::QL::Request do
   subject { described_class }
-  let(:instance) { subject.new('query_test', 'bbox_test')}
+  let(:instance) { subject.new('query_test', 'bbox_test') }
 
   describe '#initialize' do
     it 'sets the correct instance variables' do
