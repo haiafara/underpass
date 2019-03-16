@@ -39,7 +39,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler (~> 1.0)
   rgeo
   rspec (~> 3.5.0)
   simplecov
