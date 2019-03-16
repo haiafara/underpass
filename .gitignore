@@ -1,5 +1,11 @@
-# generated
+# documentation
+doc
+
+# coverage report
 coverage
 
-# bundler
+# bundler stuff
 .bundle
+
+# any built gems
+*.gem
