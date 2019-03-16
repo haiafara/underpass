@@ -17,6 +17,8 @@ describe Underpass::QL::Request do
   describe '#run' do
     it 'posts the query to the API endpoint' do
       stub = stub_request(:post, 'https://overpass-api.de/api/interpreter')
+             .with(body: /query_test/)
+             .with(body: /bbox_test/)
       instance.run
       expect(stub).to have_been_requested
     end
