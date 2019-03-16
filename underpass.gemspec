@@ -13,33 +13,9 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib'.freeze]
   s.authors = ['Janos Rusiczki'.freeze]
   s.date = '2019-02-26'
-  s.description = 'TODO: longer description of your gem'.freeze
+  s.description = 'underpass makes it easy to translate Overpass API responses into RGeo objects'.freeze
   s.email = 'janos.rusiczki@gmail.com'.freeze
-  s.extra_rdoc_files = [
-    'LICENSE.txt',
-    'README.rdoc'
-  ]
-  s.files = [
-    '.document',
-    '.rspec',
-    'Gemfile',
-    'Gemfile.lock',
-    'LICENSE.txt',
-    'README.rdoc',
-    'Rakefile',
-    'VERSION',
-    'lib/underpass.rb',
-    'lib/underpass/ql/bounding_box.rb',
-    'lib/underpass/ql/parser.rb',
-    'lib/underpass/ql/ql.rb',
-    'lib/underpass/ql/query.rb',
-    'lib/underpass/ql/request.rb',
-    'lib/underpass/ql/shape.rb',
-    'spec/spec_helper.rb',
-    'spec/underpass/ql/bounding_box_spec.rb',
-    'spec/underpass/ql/parser_spec.rb',
-    'underpass.gemspec'
-  ]
+  s.files = Dir['lib/**/*.rb', 'LICENSE', 'README.md'].to_a
   s.homepage = 'http://github.com/haiafara/underpass'.freeze
   s.licenses = ['MIT'.freeze]
   s.rubygems_version = '3.0.1'.freeze
