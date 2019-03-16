@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'underpass'.freeze
-  s.version = '0.0.4'
+  s.version = '0.0.5'
 
   s.required_rubygems_version = Gem::Requirement.new('>= 0'.freeze) if s.respond_to? :required_rubygems_version=
   s.require_paths = ['lib'.freeze]
@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.files = Dir['lib/**/*.rb', 'LICENSE', 'README.md'].to_a
   s.homepage = 'http://github.com/haiafara/underpass'.freeze
   s.licenses = ['MIT'.freeze]
-  s.required_ruby_version = '>= 2.6.0'
+  s.required_ruby_version = '>= 2.3.0'
   s.rubygems_version = '3.0.1'.freeze
   s.summary = 'A library that translates Overpass API responses into RGeo objects'.freeze
 
