@@ -15,10 +15,6 @@ Or put it in your Gemfile:
 
     gem 'underpass'
 
-## To Do
-
-Have a look at the [issue tracker](https://github.com/haiafara/underpass/issues).
-
 ## Usage
 
     # create a bounding box
@@ -28,6 +24,10 @@ Have a look at the [issue tracker](https://github.com/haiafara/underpass/issues)
     op_query = 'way["heritage:operator"="lmi"]["ref:ro:lmi"="MM-II-m-B-04508"];'
     # perform the query and get results
     result = Underpass::QL::Query.perform(bbox, op_query)
+
+## To Do
+
+Have a look at the [issue tracker](https://github.com/haiafara/underpass/issues).
 
 ## Contributing
 
