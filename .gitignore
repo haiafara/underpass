@@ -9,3 +9,6 @@ coverage
 
 # any built gems
 *.gem
+
+# self explanatory
+Gemfile.lock
