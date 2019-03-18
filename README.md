@@ -15,6 +15,10 @@ Or put it in your Gemfile:
 
     gem 'underpass'
 
+## To Do
+
+Have a look at the [issue tracker](https://github.com/haiafara/underpass/issues).
+
 ## Usage
 
     # create a bounding box
