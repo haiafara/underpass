@@ -1,14 +1,20 @@
 # frozen_string_literal: true
 
+# Returns the version of the gem as a <tt>Gem::Version</tt>
 module Underpass
-  # The version module. Set the gem version from the constants.
-  module Version
+  # Prints the gem version as a string
+  #
+  # @return [String]
+  def self.gem_version
+    Gem::Version.new VERSION::STRING
+  end
+
+  # Used to generate the version string
+  module VERSION
     MAJOR = 0
     MINOR = 0
     PATCH = 5
 
-    def self.version_string
-      [Version::MAJOR, Version::MINOR, Version::PATCH].join('.')
-    end
+    STRING = [MAJOR, MINOR, PATCH].join('.')
   end
 end

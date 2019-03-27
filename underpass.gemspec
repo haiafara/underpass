@@ -5,7 +5,7 @@ require File.expand_path('lib/underpass/version', __dir__)
 
 Gem::Specification.new do |s|
   s.name = 'underpass'
-  s.version = Underpass::Version.version_string
+  s.version = Underpass.gem_version
   s.date = Date.today
 
   s.summary = <<-SUMMARY
