@@ -2,6 +2,7 @@
 
 [![Gem Version](https://badge.fury.io/rb/underpass.svg)](https://badge.fury.io/rb/underpass)
 [![Build Status](https://www.travis-ci.org/haiafara/underpass.svg?branch=master)](https://www.travis-ci.org/haiafara/underpass)
+[![Coverage Status](https://coveralls.io/repos/github/haiafara/underpass/badge.svg?branch=master)](https://coveralls.io/github/haiafara/underpass?branch=master)
 
 A library that makes it easy to translate [Overpass API](https://wiki.openstreetmap.org/wiki/Overpass_API) responses into RGeo objects.
 
