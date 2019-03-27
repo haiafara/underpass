@@ -20,6 +20,10 @@ Gem::Specification.new do |s|
   s.email = 'janos.rusiczki@gmail.com'
   s.homepage = 'http://github.com/haiafara/underpass'
   s.licenses = ['MIT']
+  s.metadata = {
+    'source_code_uri' => s.homepage,
+    'bug_tracker_uri' => "#{s.homepage}/issues"
+  }
 
   s.require_paths = ['lib']
   s.files = Dir['lib/**/*.rb', 'LICENSE', 'README.md'].to_a
