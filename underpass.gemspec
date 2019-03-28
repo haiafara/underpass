@@ -1,34 +1,37 @@
+# frozen_string_literal: true
+
+require 'date'
+require File.expand_path('lib/underpass/version', __dir__)
+
 Gem::Specification.new do |s|
-  s.name = 'underpass'.freeze
-  s.version = '0.0.5'
+  s.name = 'underpass'
+  s.version = Underpass.gem_version
+  s.date = Date.today
 
-  s.required_rubygems_version = Gem::Requirement.new('>= 0'.freeze) if s.respond_to? :required_rubygems_version=
-  s.require_paths = ['lib'.freeze]
-  s.authors = ['Janos Rusiczki'.freeze]
-  s.date = '2019-02-26'
-  s.description = 'A library that makes it easy to query the Overpass API and translate its responses into RGeo objects.'.freeze
-  s.email = 'janos.rusiczki@gmail.com'.freeze
+  s.summary = <<-SUMMARY
+    A library that translates Overpass API responses into RGeo objects
+  SUMMARY
+
+  s.description = <<-DESCRIPTION
+    A library that makes it easy to query the Overpass API and translate its responses into RGeo objects
+  DESCRIPTION
+
+  s.authors = ['Janos Rusiczki']
+  s.email = 'janos.rusiczki@gmail.com'
+  s.homepage = 'http://github.com/haiafara/underpass'
+  s.licenses = ['MIT']
+  s.metadata = {
+    'source_code_uri' => s.homepage,
+    'bug_tracker_uri' => "#{s.homepage}/issues"
+  }
+
+  s.require_paths = ['lib']
   s.files = Dir['lib/**/*.rb', 'LICENSE', 'README.md'].to_a
-  s.homepage = 'http://github.com/haiafara/underpass'.freeze
-  s.licenses = ['MIT'.freeze]
   s.required_ruby_version = '>= 2.3.0'
-  s.rubygems_version = '3.0.1'.freeze
-  s.summary = 'A library that translates Overpass API responses into RGeo objects'.freeze
+  s.rubygems_version = '3.0.1'
 
-  if s.respond_to? :specification_version
-    s.specification_version = 4
+  s.add_runtime_dependency 'rgeo', '~> 2.0', '>= 2.0.0'
 
-    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0')
-      s.add_runtime_dependency('rgeo'.freeze, ['~> 2.0.0'])
-      s.add_development_dependency('rspec'.freeze, ['~> 3.5.0'])
-      s.add_development_dependency('simplecov'.freeze, ['~> 0.16.0'])
-    else
-      s.add_dependency('rgeo'.freeze, ['~> 2.0.0'])
-      s.add_dependency('rspec'.freeze, ['~> 3.5.0'])
-      s.add_dependency('simplecov'.freeze, ['~> 0.16.0'])
-    end
-  else
-    s.add_dependency('rspec'.freeze, ['~> 3.5.0'])
-    s.add_dependency('simplecov'.freeze, ['~> 0.16.0'])
-  end
+  s.add_development_dependency 'rspec', '~> 3.5', '>= 3.5.0'
+  s.add_development_dependency 'simplecov', '~> 0.16.0'
 end
