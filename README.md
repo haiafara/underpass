@@ -18,15 +18,17 @@ Or put it in your Gemfile:
 
 ## Usage
 
-    # require the library if it's not autoloaded
-    require 'underpass'
-    # create a bounding box in which the query will be run
-    f = RGeo::Geographic.spherical_factory
-    bbox = f.parse_wkt('POLYGON ((23.669 47.65, 23.725 47.65, 23.725 47.674, 23.669 47.674, 23.669 47.65))')
-    # provide the query
-    op_query = 'way["heritage:operator"="lmi"]["ref:ro:lmi"="MM-II-m-B-04508"];'
-    # perform the query and get your results
-    result = Underpass::QL::Query.perform(bbox, op_query)
+```ruby
+# require the library if it's not autoloaded
+require 'underpass'
+# create a bounding box in which the query will be run
+f = RGeo::Geographic.spherical_factory
+bbox = f.parse_wkt('POLYGON ((23.669 47.65, 23.725 47.65, 23.725 47.674, 23.669 47.674, 23.669 47.65))')
+# provide the query
+op_query = 'way["heritage:operator"="lmi"]["ref:ro:lmi"="MM-II-m-B-04508"];'
+# perform the query and get your results
+result = Underpass::QL::Query.perform(bbox, op_query)
+```
 
 ## To Do
 
