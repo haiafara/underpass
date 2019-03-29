@@ -4,7 +4,7 @@
 [![Build Status](https://www.travis-ci.org/haiafara/underpass.svg?branch=master)](https://www.travis-ci.org/haiafara/underpass)
 [![Coverage Status](https://coveralls.io/repos/github/haiafara/underpass/badge.svg?branch=master)](https://coveralls.io/github/haiafara/underpass?branch=master)
 
-A library that makes it easy to translate [Overpass API](https://wiki.openstreetmap.org/wiki/Overpass_API) responses into RGeo objects.
+A library that makes it easy to query the [Overpass API](https://wiki.openstreetmap.org/wiki/Overpass_API) and translate its responses into [RGeo](https://github.com/rgeo/rgeo) objects.
 
 ## Installation
 
