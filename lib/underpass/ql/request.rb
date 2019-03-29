@@ -4,8 +4,8 @@ module Underpass
   module QL
     # Deals with performing the Overpass API request
     class Request
-      API_URI = 'https://overpass-api.de/api/interpreter'.freeze
-      QUERY_TEMPLATE = <<-TEMPLATE.freeze
+      API_URI = 'https://overpass-api.de/api/interpreter'
+      QUERY_TEMPLATE = <<-TEMPLATE
         [out:json][timeout:25]BBOX;
         (
           QUERY

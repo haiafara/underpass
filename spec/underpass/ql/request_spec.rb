@@ -9,8 +9,12 @@ describe Underpass::QL::Request do
 
   describe '#initialize' do
     it 'sets the correct instance variables' do
-      expect(instance.instance_variable_get(:@overpass_query)).to eq('query_test')
-      expect(instance.instance_variable_get(:@global_bbox)).to eq('[bbox_test]')
+      expect(
+        instance.instance_variable_get(:@overpass_query)
+      ).to eq('query_test')
+      expect(
+        instance.instance_variable_get(:@global_bbox)
+      ).to eq('[bbox_test]')
     end
   end
 

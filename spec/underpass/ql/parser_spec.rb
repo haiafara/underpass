@@ -33,7 +33,8 @@ describe Underpass::QL::Parser do
       instance.instance_variable_set(:@ways, a: 1, b: 2)
     end
     it 'calls polygon from way and returns matches' do
-      expect(Underpass::QL::Shape).to receive(:polygon_from_way).twice.and_return('test')
+      expect(Underpass::QL::Shape).to receive(:polygon_from_way)
+        .twice.and_return('test')
       expect(instance.matches.size).to eq(2)
     end
   end
