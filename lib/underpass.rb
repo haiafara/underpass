@@ -13,7 +13,16 @@ end
 # Example usage
 #
 # require 'underpass'
+# wkt = <<-WKT
+#   POLYGON ((
+#     23.669 47.65,
+#     23.725 47.65,
+#     23.725 47.674,
+#     23.669 47.674,
+#     23.669 47.65
+#   ))
+# WKT
 # f = RGeo::Geographic.spherical_factory
-# bbox = f.parse_wkt('POLYGON ((23.669 47.65, 23.725 47.65, 23.725 47.674, 23.669 47.674, 23.669 47.65))')
+# bbox = f.parse_wkt(wkt)
 # op_query = 'way["heritage:operator"="lmi"]["ref:ro:lmi"="MM-II-m-B-04508"];'
 # Underpass::QL::Query.perform(bbox, op_query)
