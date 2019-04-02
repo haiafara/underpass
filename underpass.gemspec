@@ -32,6 +32,6 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'rgeo', '~> 2.0', '>= 2.0.0'
 
-  s.add_development_dependency 'rspec', '~> 3.5', '>= 3.5.0'
+  s.add_development_dependency 'rspec', '~> 3.8', '>= 3.8.0'
   s.add_development_dependency 'simplecov', '~> 0.16.0'
 end
