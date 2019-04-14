@@ -22,9 +22,14 @@ module Underpass
 
       # Performs the API request
       def run
-        query = QUERY_TEMPLATE.sub('BBOX', @global_bbox)
-                              .sub('QUERY', @overpass_query)
-        Net::HTTP.post_form(URI(API_URI), data: query)
+        Net::HTTP.post_form(URI(API_URI), data: build_query)
+      end
+
+      private
+
+      def build_query
+        QUERY_TEMPLATE.sub('BBOX', @global_bbox)
+                      .sub('QUERY', @overpass_query)
       end
     end
   end
