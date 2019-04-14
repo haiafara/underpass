@@ -34,4 +34,17 @@ describe Underpass::QL::Shape do
       )
     end
   end
+
+  describe '#point_from_node' do
+    let(:node) { NodesAndWays::NODE }
+    it 'converts a node to a point' do
+      point = Underpass::QL::Shape.point_from_node(node)
+      expect(point.class).to eq(
+        RGeo::Geographic::SphericalPointImpl
+      )
+      expect(point.as_text).to eq(
+        'POINT (-1.0 1.0)'
+      )
+    end
+  end
 end
