@@ -29,13 +29,40 @@ describe Underpass::QL::Parser do
   end
 
   describe '#matches' do
-    before do
-      instance.instance_variable_set(:@ways, a: 1, b: 2)
+    context 'there are nodes with tags' do
+      before do
+        instance.instance_variable_set(
+          :@nodes,
+          a: {},
+          b: { tags: {} },
+          c: { tags: {} }
+        )
+        instance.instance_variable_set(:@ways, {})
+      end
+
+      it 'calls point_from_node for nodes with tags and returns matches' do
+        expect(Underpass::QL::Shape).to receive(:point_from_node)
+          .twice.and_return('test')
+        expect(instance.matches.size).to eq(2)
+      end
     end
-    it 'calls polygon from way and returns matches' do
-      expect(Underpass::QL::Shape).to receive(:polygon_from_way)
-        .twice.and_return('test')
-      expect(instance.matches.size).to eq(2)
+
+    context 'there are ways with tags' do
+      before do
+        instance.instance_variable_set(:@nodes, {})
+        instance.instance_variable_set(
+          :@ways,
+          a: { tags: {} },
+          b: { tags: {} },
+          c: {}
+        )
+      end
+
+      it 'calls polygon_from_way for ways with tags and returns matches' do
+        expect(Underpass::QL::Shape).to receive(:polygon_from_way)
+          .twice.and_return('test')
+        expect(instance.matches.size).to eq(2)
+      end
     end
   end
 
@@ -58,20 +85,15 @@ describe Underpass::QL::Parser do
     it 'returns a hash of ways indexed by id' do
       result = instance.send(:extract_indexed_ways, nodes_and_ways)
       expect(result.size).to eq(1)
-      expect(result.first).to eq(
-        [
-          1,
-          {
-            type: 'way',
-            id: 1,
-            nodes: [2, 3, 4, 5],
-            tags: {
-              amenity: 'something',
-              building: 'yes',
-              name: 'Test'
-            }
-          }
-        ]
+      expect(result[1]).to eq(
+        type: 'way',
+        id: 1,
+        nodes: [2, 3, 4, 5],
+        tags: {
+          amenity: 'something',
+          building: 'yes',
+          name: 'Test'
+        }
       )
     end
   end

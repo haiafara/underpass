@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 module NodesAndWays
+  NODE =
+    {
+      type: 'node',
+      lat: 1,
+      lon: -1
+    }.freeze
+
   NODES =
     {
       1 => {
