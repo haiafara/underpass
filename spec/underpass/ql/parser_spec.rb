@@ -50,18 +50,40 @@ describe Underpass::QL::Parser do
     context 'there are ways with tags' do
       before do
         instance.instance_variable_set(:@nodes, {})
-        instance.instance_variable_set(
-          :@ways,
-          a: { tags: {} },
-          b: { tags: {} },
-          c: {}
-        )
       end
 
-      it 'calls polygon_from_way for ways with tags and returns matches' do
-        expect(Underpass::QL::Shape).to receive(:polygon_from_way)
-          .twice.and_return('test')
-        expect(instance.matches.size).to eq(2)
+      context 'ways are polygons' do
+        before do
+          instance.instance_variable_set(
+            :@ways,
+            a: { nodes: [1, 2, 1], tags: {} },
+            b: { nodes: [3, 4, 3], tags: {} },
+            c: {}
+          )
+        end
+
+        it 'calls polygon_from_way and returns matches' do
+          expect(Underpass::QL::Shape).to receive(:polygon_from_way)
+            .twice.and_return('test')
+          expect(instance.matches.size).to eq(2)
+        end
+      end
+
+      context 'ways are line strings' do
+        before do
+          instance.instance_variable_set(
+            :@ways,
+            a: { nodes: [1, 2, 3], tags: {} },
+            b: { nodes: [4, 5, 6], tags: {} },
+            c: {}
+          )
+        end
+
+        it 'calls line_string_from_way and returns matches' do
+          expect(Underpass::QL::Shape).to receive(:line_string_from_way)
+            .twice.and_return('test')
+          expect(instance.matches.size).to eq(2)
+        end
       end
     end
   end

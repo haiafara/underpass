@@ -9,6 +9,24 @@ describe Underpass::QL::Shape do
 
   let(:nodes) { NodesAndWays::NODES }
 
+  describe '#open_way?' do
+    subject { Underpass::QL::Shape.open_way?(way) }
+
+    context 'way is a polygon' do
+      let(:way) { NodesAndWays::POLYGON_WAY }
+      it 'returns true' do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context 'way is a line string' do
+      let(:way) { NodesAndWays::LINE_STRING_WAY }
+      it 'returns true' do
+        expect(subject).to eq(false)
+      end
+    end
+  end
+
   describe '#polygon_from_way' do
     let(:way) { NodesAndWays::POLYGON_WAY }
     it 'converts a way and its nodes to a polygon' do
