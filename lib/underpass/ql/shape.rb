@@ -19,6 +19,11 @@ module Underpass
         )
       end
 
+      def self.point_from_node(node)
+        f = RGeo::Geographic.spherical_factory(srid: 4326)
+        f.point(node[:lon], node[:lat])
+      end
+
       # There should be some sort of 'decorator' to return an object
       # with the shape and a copy of the tags as
       # {
