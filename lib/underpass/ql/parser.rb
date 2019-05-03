@@ -35,15 +35,15 @@ module Underpass
       private
 
       def way_matches(way)
-        if way_polygon?(way)
+        if open_way?(way)
           polygon_from_way(way, @nodes)
         else
           line_string_from_way(way, @nodes)
         end
       end
 
-      def way_polygon?(way)
-        Underpass::QL::Shape.way_polygon?(way)
+      def open_way?(way)
+        Underpass::QL::Shape.open_way?(way)
       end
 
       def point_from_node(node)

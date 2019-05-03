@@ -5,7 +5,7 @@ module Underpass
     # Contains factories for various RGeo shapes from ways and nodes parsed
     # with the Parser class
     class Shape
-      def self.way_polygon?(way)
+      def self.open_way?(way)
         way[:nodes].first == way[:nodes].last
       end
 
@@ -30,6 +30,7 @@ module Underpass
 
       # There should be some sort of 'decorator' to return an object
       # with the shape and a copy of the tags as
+      # Bonus: try to make it RGeo::GeoJSON.encode compatible
       # {
       #   tags: way[:tags],
       #   shape: shape

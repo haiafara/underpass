@@ -9,8 +9,8 @@ describe Underpass::QL::Shape do
 
   let(:nodes) { NodesAndWays::NODES }
 
-  describe '#way_polygon?' do
-    subject { Underpass::QL::Shape.way_polygon?(way) }
+  describe '#open_way?' do
+    subject { Underpass::QL::Shape.open_way?(way) }
 
     context 'way is a polygon' do
       let(:way) { NodesAndWays::POLYGON_WAY }
