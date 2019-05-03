@@ -5,12 +5,16 @@ require 'underpass'
 
 # aka the integration spec
 describe Underpass::QL::Query do
-  let(:factory) { RGeo::Geographic.spherical_factory }
-  let(:bbox) { factory.parse_wkt('POLYGON ((-1 1, 1 1, 1 -1, -1 -1, -1 1))') }
+  let(:bbox) { double }
   subject { described_class }
 
+  # bounding box is irelevant since it's only used on Overpass
+  before do
+    allow(Underpass::QL::BoundingBox).to receive(:from_geometry)
+  end
+
   describe '#perform' do
-    context 'when a polygon way is returned' do
+    context 'when a closed way is returned' do
       before do
         stub_request(:post, 'https://overpass-api.de/api/interpreter')
           .to_return(
@@ -19,7 +23,7 @@ describe Underpass::QL::Query do
           )
       end
 
-      it 'does what it has to' do
+      it 'returns the correct results' do
         op_query = 'way["something"];'
         results = subject.perform(bbox, op_query)
         expect(results.size).to eq(1)
@@ -32,7 +36,7 @@ describe Underpass::QL::Query do
       end
     end
 
-    context 'when a line string way is returned' do
+    context 'when an open way is returned' do
       before do
         stub_request(:post, 'https://overpass-api.de/api/interpreter')
           .to_return(
@@ -41,7 +45,7 @@ describe Underpass::QL::Query do
           )
       end
 
-      it 'does what it has to' do
+      it 'returns the correct results' do
         op_query = 'way["something"];'
         results = subject.perform(bbox, op_query)
         expect(results.size).to eq(1)
@@ -64,7 +68,7 @@ describe Underpass::QL::Query do
         )
     end
 
-    it 'does what it has to' do
+    it 'returns the correct results' do
       op_query = 'node["something"];'
       results = subject.perform(bbox, op_query)
       expect(results.size).to eq(1)
