@@ -5,6 +5,8 @@ require 'underpass'
 
 # aka the integration spec
 describe Underpass::QL::Query do
+  let(:factory) { RGeo::Geographic.spherical_factory }
+  let(:bbox) { factory.parse_wkt('POLYGON ((-1 1, 1 1, 1 -1, -1 -1, -1 1))') }
   subject { described_class }
 
   describe '#perform' do
@@ -18,8 +20,6 @@ describe Underpass::QL::Query do
       end
 
       it 'does what it has to' do
-        f = RGeo::Geographic.spherical_factory
-        bbox = f.parse_wkt('POLYGON ((-1 1, 1 1, 1 -1, -1 -1, -1 1))')
         op_query = 'way["something"];'
         results = subject.perform(bbox, op_query)
         expect(results.size).to eq(1)
@@ -42,8 +42,6 @@ describe Underpass::QL::Query do
       end
 
       it 'does what it has to' do
-        f = RGeo::Geographic.spherical_factory
-        bbox = f.parse_wkt('POLYGON ((-1 1, 1 1, 1 -1, -1 -1, -1 1))')
         op_query = 'way["something"];'
         results = subject.perform(bbox, op_query)
         expect(results.size).to eq(1)
@@ -67,8 +65,6 @@ describe Underpass::QL::Query do
     end
 
     it 'does what it has to' do
-      f = RGeo::Geographic.spherical_factory
-      bbox = f.parse_wkt('POLYGON ((-1 1, 1 1, 1 -1, -1 -1, -1 1))')
       op_query = 'node["something"];'
       results = subject.perform(bbox, op_query)
       expect(results.size).to eq(1)
