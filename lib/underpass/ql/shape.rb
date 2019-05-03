@@ -5,6 +5,10 @@ module Underpass
     # Contains factories for various RGeo shapes from ways and nodes parsed
     # with the Parser class
     class Shape
+      def self.way_polygon?(way)
+        way[:nodes].first == way[:nodes].last
+      end
+
       def self.polygon_from_way(way, nodes)
         f = RGeo::Geographic.spherical_factory(srid: 4326)
         f.polygon(line_string_from_way(way, nodes))

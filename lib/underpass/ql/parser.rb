@@ -26,7 +26,7 @@ module Underpass
         end
 
         @ways.each_value do |way|
-          @matches << polygon_from_way(way, @nodes) if way.key?(:tags)
+          @matches << way_matches(way) if way.key?(:tags)
         end
 
         @matches
@@ -34,12 +34,28 @@ module Underpass
 
       private
 
+      def way_matches(way)
+        if way_polygon?(way)
+          polygon_from_way(way, @nodes)
+        else
+          line_string_from_way(way, @nodes)
+        end
+      end
+
+      def way_polygon?(way)
+        Underpass::QL::Shape.way_polygon?(way)
+      end
+
       def point_from_node(node)
         Underpass::QL::Shape.point_from_node(node)
       end
 
       def polygon_from_way(way, nodes)
         Underpass::QL::Shape.polygon_from_way(way, nodes)
+      end
+
+      def line_string_from_way(way, nodes)
+        Underpass::QL::Shape.line_string_from_way(way, nodes)
       end
 
       def extract_indexed_nodes(elements)
