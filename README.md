@@ -30,6 +30,8 @@ op_query = 'way["heritage:operator"="lmi"]["ref:ro:lmi"="MM-II-m-B-04508"];'
 result = Underpass::QL::Query.perform(bbox, op_query)
 ```
 
+See [more usage examples](usage-examples.md).
+
 ## To Do
 
 Have a look at the [issue tracker](https://github.com/haiafara/underpass/issues).
