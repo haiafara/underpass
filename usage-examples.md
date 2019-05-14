@@ -7,7 +7,7 @@
 require 'underpass'
 # create a bounding box in which the query will be run
 f = RGeo::Geographic.spherical_factory
-bbox = f.parse_wkt('POLYGON ((23.557 47.602, 23.557 47.722, 23.837 47.722, 23.837000000000003 47.602, 23.557 47.602))')
+bbox = f.parse_wkt('POLYGON ((23.557 47.602, 23.557 47.722, 23.837 47.722, 23.837 47.602, 23.557 47.602))')
 # we won't use the Underpass::QL::Query shortcut
 op_bbox = Underpass::QL::BoundingBox.from_geometry(bbox)
 op_query = 'node[name="Borcut Baia Sprie"][natural="spring"];'
