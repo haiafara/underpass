@@ -19,15 +19,25 @@ Or put it in your Gemfile:
 ## Usage
 
 ```ruby
-# require the library if it's not autoloaded
+# Require the library if it's not autoloaded
 require 'underpass'
+# Define a polygon via WKT (Well Known Text)
+wkt = <<-WKT
+  POLYGON ((
+    23.669 47.65,
+    23.725 47.65,
+    23.725 47.674,
+    23.669 47.674,
+    23.669 47.65
+  ))
+WKT
 # create a bounding box in which the query will be run
 f = RGeo::Geographic.spherical_factory
-bbox = f.parse_wkt('POLYGON ((23.669 47.65, 23.725 47.65, 23.725 47.674, 23.669 47.674, 23.669 47.65))')
+bbox = f.parse_wkt(wkt)
 # provide the query
 op_query = 'way["heritage:operator"="lmi"]["ref:ro:lmi"="MM-II-m-B-04508"];'
-# perform the query and get your results
-result = Underpass::QL::Query.perform(bbox, op_query)
+# perform the query and get your matches
+matches = Underpass::QL::Query.perform(bbox, op_query)
 ```
 
 See [more usage examples](usage-examples.md).
@@ -36,14 +46,19 @@ See [more usage examples](usage-examples.md).
 
 Have a look at the [issue tracker](https://github.com/haiafara/underpass/issues).
 
-## Contributing
+## How To Contribute
 
-* Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet;
+* Check out the latest development branch to make sure the feature hasn't been implemented or the bug hasn't been fixed yet;
 * Check out the issue tracker to make sure someone already hasn't requested it and / or contributed it;
-* Fork the project;
+* Fork the project, clone the fork, run `bundle install` and then make sure `rspec` runs;
 * Start a feature / bugfix branch;
 * Commit and push until you are happy with your contribution;
 * Make sure to add specs for it. This is important so your contribution won't be broken in a future version unintentionally.
+
+Further tips:
+
+* To test drive the library run `bundle console`;
+* Run `guard` in the project directory, it'll watch for file changes and run Rubocop and RSpec for real time feedback.
 
 ## License
 

@@ -4,13 +4,13 @@ require 'spec_helper'
 require 'support/nodes_and_ways'
 require 'underpass'
 
-describe Underpass::QL::Shape do
+describe Underpass::Shape do
   subject { described_class }
 
   let(:nodes) { NodesAndWays::NODES }
 
   describe '#open_way?' do
-    subject { Underpass::QL::Shape.open_way?(way) }
+    subject { described_class.open_way?(way) }
 
     context 'way is a polygon' do
       let(:way) { NodesAndWays::POLYGON_WAY }
@@ -30,7 +30,7 @@ describe Underpass::QL::Shape do
   describe '#polygon_from_way' do
     let(:way) { NodesAndWays::POLYGON_WAY }
     it 'converts a way and its nodes to a polygon' do
-      polygon = Underpass::QL::Shape.polygon_from_way(way, nodes)
+      polygon = described_class.polygon_from_way(way, nodes)
       expect(polygon.class).to eq(
         RGeo::Geographic::SphericalPolygonImpl
       )
@@ -43,7 +43,7 @@ describe Underpass::QL::Shape do
   describe '#line_string_from_way' do
     let(:way) { NodesAndWays::LINE_STRING_WAY }
     it 'converts a way and its nodes to a linestring' do
-      line_string = Underpass::QL::Shape.line_string_from_way(way, nodes)
+      line_string = described_class.line_string_from_way(way, nodes)
       expect(line_string.class).to eq(
         RGeo::Geographic::SphericalLineStringImpl
       )
@@ -56,7 +56,7 @@ describe Underpass::QL::Shape do
   describe '#point_from_node' do
     let(:node) { NodesAndWays::NODE }
     it 'converts a node to a point' do
-      point = Underpass::QL::Shape.point_from_node(node)
+      point = described_class.point_from_node(node)
       expect(point.class).to eq(
         RGeo::Geographic::SphericalPointImpl
       )

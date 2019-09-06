@@ -3,7 +3,13 @@
 require 'rgeo'
 require 'json'
 
-require 'underpass/ql/ql'
+require 'underpass/client'
+require 'underpass/matcher'
+require 'underpass/shape'
+require 'underpass/ql/bounding_box'
+require 'underpass/ql/query'
+require 'underpass/ql/request'
+require 'underpass/ql/response'
 
 # Underpass is a library that makes it easy to query the Overpass API
 # and translate its responses into RGeo objects
