@@ -21,7 +21,7 @@ Or put it in your Gemfile:
 ```ruby
 # Require the library if it's not autoloaded
 require 'underpass'
-# Use WKT (Well Known Text) to define a polygon
+# Define a polygon to be used as bounding box
 wkt = <<-WKT
   POLYGON ((
     23.669 47.65,
@@ -31,11 +31,11 @@ wkt = <<-WKT
     23.669 47.65
   ))
 WKT
-# create a bounding box in which the query will be run
+# Create a bounding box in which the query will run
 bbox = RGeo::Geographic.spherical_factory.parse_wkt(wkt)
-# provide the query
+# Define the query
 op_query = 'way["heritage:operator"="lmi"]["ref:ro:lmi"="MM-II-m-B-04508"];'
-# perform the query and get your matches
+# Perform the query and get your matches
 matches = Underpass::QL::Query.perform(bbox, op_query)
 ```
 
@@ -48,11 +48,12 @@ Have a look at the [issue tracker](https://github.com/haiafara/underpass/issues)
 ## How To Contribute
 
 * Check out the latest master branch to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
-* Check out the issue tracker to make sure someone already hasn't requested it and / or contributed it
+* Check out the [issue tracker](https://github.com/haiafara/underpass/issues) to make sure someone already hasn't requested it and / or contributed it
 * Fork the project, clone the fork, run `bundle install` and then make sure `rspec` runs
 * Start a feature / bugfix branch
 * Commit and push until you are happy with your contribution
-* Make sure to add specs for it. This is important so your contribution won't be broken in a future version unintentionally
+* Make sure to add specs for it - this is important so your contribution won't be broken in a future version unintentionally
+* Open a pull request
 
 Further tips:
 
