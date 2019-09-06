@@ -42,6 +42,12 @@ matches = Underpass::QL::Query.perform(bbox, op_query)
 
 See [more usage examples](usage-examples.md).
 
+## Development
+
+* Test the library by running `bundle console`
+* Run `guard` in the project directory, it will run Rubocop and RSpec on the
+  modified files automatically
+
 ## To Do
 
 Have a look at the [issue tracker](https://github.com/haiafara/underpass/issues).
