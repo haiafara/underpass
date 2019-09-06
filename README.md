@@ -42,24 +42,23 @@ matches = Underpass::QL::Query.perform(bbox, op_query)
 
 See [more usage examples](usage-examples.md).
 
-## Development
-
-* Test the library by running `bundle console`
-* Run `guard` in the project directory, it will run Rubocop and RSpec on the
-  modified files automatically
-
 ## To Do
 
 Have a look at the [issue tracker](https://github.com/haiafara/underpass/issues).
 
-## Contributing
+## How To Contribute
 
-* Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet;
+* Check out the latest development branch to make sure the feature hasn't been implemented or the bug hasn't been fixed yet;
 * Check out the issue tracker to make sure someone already hasn't requested it and / or contributed it;
-* Fork the project;
+* Fork the project, clone the fork, run `bundle install` and then make sure `rspec` runs;
 * Start a feature / bugfix branch;
 * Commit and push until you are happy with your contribution;
 * Make sure to add specs for it. This is important so your contribution won't be broken in a future version unintentionally.
+
+Further tips:
+
+* To test drive the library run `bundle console`;
+* Run `guard` in the project directory, it'll watch for file changes and run Rubocop and RSpec for real time feedback.
 
 ## License
 
