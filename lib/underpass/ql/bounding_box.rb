@@ -2,7 +2,7 @@
 
 module Underpass
   module QL
-    # Bounding box related utilities.
+    # Bounding box related utilities
     class BoundingBox
       # Returns the Overpass query language bounding box string
       # when provided with an RGeo geometry

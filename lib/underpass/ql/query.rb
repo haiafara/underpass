@@ -6,11 +6,15 @@ module Underpass
     class Query
       # Shortcut method that glues together the whole library.
       # * +bounding_box+ an RGeo polygon
-      # * +query+ is the Overpass QL query
+      # * +query+ an Overpass QL query
       def self.perform(bounding_box, query)
-        op_bbox = Underpass::QL::BoundingBox.from_geometry(bounding_box)
-        response = Underpass::QL::Request.new(query, op_bbox).run
-        Underpass::QL::Parser.new(response).parse.matches
+        op_bbox      = Underpass::QL::BoundingBox.from_geometry(bounding_box)
+        request      = Underpass::QL::Request.new(query, op_bbox)
+        api_response = Underpass::Client.perform(request)
+        response     = Underpass::QL::Response.new(api_response)
+        matcher      = Underpass::Matcher.new(response)
+
+        matcher.matches
       end
     end
   end

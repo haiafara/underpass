@@ -1,20 +1,19 @@
 # frozen_string_literal: true
 
 module Underpass
-  module QL
-    # Contains factories for various RGeo shapes from ways and nodes parsed
-    # with the Parser class
-    class Shape
-      def self.open_way?(way)
+  # Helper methods to convert shapes to RGeo
+  class Shape
+    class << self
+      def open_way?(way)
         way[:nodes].first == way[:nodes].last
       end
 
-      def self.polygon_from_way(way, nodes)
+      def polygon_from_way(way, nodes)
         f = RGeo::Geographic.spherical_factory(srid: 4326)
         f.polygon(line_string_from_way(way, nodes))
       end
 
-      def self.line_string_from_way(way, nodes)
+      def line_string_from_way(way, nodes)
         f = RGeo::Geographic.spherical_factory(srid: 4326)
         f.line_string(
           way[:nodes].map do |n|
@@ -23,7 +22,7 @@ module Underpass
         )
       end
 
-      def self.point_from_node(node)
+      def point_from_node(node)
         f = RGeo::Geographic.spherical_factory(srid: 4326)
         f.point(node[:lon], node[:lat])
       end
