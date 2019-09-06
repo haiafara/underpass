@@ -28,7 +28,7 @@ op_query = 'way["heritage:operator"="lmi"]["ref:ro:lmi"="MM-II-m-B-04508"];'
 
 # We won't use the Underpass::QL::Query convenience class
 op_bbox      = Underpass::QL::BoundingBox.from_geometry(bounding_box)
-request      = Underpass::QL::Request.new(query, op_bbox)
+request      = Underpass::QL::Request.new(op_query, op_bbox)
 api_response = Underpass::Client.perform(request)
 response     = Underpass::QL::Response.new(api_response)
 matcher      = Underpass::Matcher.new(response)
