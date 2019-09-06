@@ -32,8 +32,7 @@ wkt = <<-WKT
   ))
 WKT
 # create a bounding box in which the query will be run
-f = RGeo::Geographic.spherical_factory
-bbox = f.parse_wkt(wkt)
+bbox = RGeo::Geographic.spherical_factory.parse_wkt(wkt)
 # provide the query
 op_query = 'way["heritage:operator"="lmi"]["ref:ro:lmi"="MM-II-m-B-04508"];'
 # perform the query and get your matches
