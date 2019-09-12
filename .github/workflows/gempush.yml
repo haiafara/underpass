@@ -16,7 +16,9 @@ jobs:
         version: 2.6.x
         
     - name: Run specs
-      run: bundle exec rspec
+      run: |
+        bundle install
+        bundle exec rspec
       
   publish:
     name: Publish
