@@ -1,23 +1,27 @@
 name: Ruby Gem
 
-on:
-  push:
-    branches:
-      - master
+on: [push]
 
 jobs:
   build:
-    name: Build + Publish
+    name: Specs
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@master
+    
     - name: Set up Ruby 2.6
       uses: actions/setup-ruby@v1
       with:
         version: 2.6.x
-
+        
+    - name: Run specs
+      run: bundle exec rspec
+      
+  publish:
+    - needs: build
     - name: Publish to RubyGems
+      if: github.ref == 'master'
       run: |
         mkdir -p $HOME/.gem
         touch $HOME/.gem/credentials
