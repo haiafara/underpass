@@ -31,7 +31,7 @@ wkt = <<-WKT
     23.669 47.65
   ))
 WKT
-# Create a bounding box in which the query will run
+# Create the bounding box in which the query will run
 bbox = RGeo::Geographic.spherical_factory.parse_wkt(wkt)
 # Define the query
 query = 'way["heritage:operator"="lmi"]["ref:ro:lmi"="MM-II-m-B-04508"];'
