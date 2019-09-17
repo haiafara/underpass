@@ -33,7 +33,7 @@ wkt = <<-WKT
 WKT
 # Create the bounding box in which the query will run
 bbox = RGeo::Geographic.spherical_factory.parse_wkt(wkt)
-# Define the query
+# Define the Overpass QL query
 query = 'way["heritage:operator"="lmi"]["ref:ro:lmi"="MM-II-m-B-04508"];'
 # Perform the query and get your matches
 matches = Underpass::QL::Query.perform(bbox, query)
