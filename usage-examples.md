@@ -23,7 +23,7 @@ WKT
 # Create an RGeo bounding box in which the query will run
 bbox = RGeo::Geographic.spherical_factory.parse_wkt(wkt)
 
-# Define the query (op = Overpass)
+# Define the Overpass QL query
 op_query = 'way["heritage:operator"="lmi"]["ref:ro:lmi"="MM-II-m-B-04508"];'
 
 # We won't use the Underpass::QL::Query convenience class
@@ -33,5 +33,6 @@ api_response = Underpass::Client.perform(request)
 response     = Underpass::QL::Response.new(api_response)
 matcher      = Underpass::Matcher.new(response)
 
+# We'll have our matches in
 matcher.matches
 ```
