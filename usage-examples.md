@@ -22,14 +22,12 @@ wkt = <<-WKT
   ))
 WKT
 
-# Create an RGeo bounding box in which the query will run
-bounding_box = RGeo::Geographic.spherical_factory.parse_wkt(wkt)
-
 # Define the Overpass QL query
 op_query = 'way["heritage:operator"="lmi"]["ref:ro:lmi"="MM-II-m-B-04508"];'
 
 # We won't use the Underpass::QL::Query convenience class
-op_bbox      = Underpass::QL::BoundingBox.from_geometry(bounding_box)
+# Note that we pass the wkt directly to the from_wkt method
+op_bbox      = Underpass::QL::BoundingBox.from_wkt(wkt)
 request      = Underpass::QL::Request.new(op_query, op_bbox)
 api_response = Underpass::Client.perform(request)
 response     = Underpass::QL::Response.new(api_response)
@@ -39,7 +37,7 @@ matcher      = Underpass::Matcher.new(response)
 matcher.matches
 ```
 
-### Relation
+### Relations
 
 ```ruby
 require 'underpass'
@@ -54,10 +52,8 @@ wkt = <<-WKT
   ))
 WKT
 
-bounding_box = RGeo::Geographic.spherical_factory.parse_wkt(wkt)
-
 op_query     = 'relation["name"="Árok"];'
-op_bbox      = Underpass::QL::BoundingBox.from_geometry(bounding_box)
+op_bbox      = Underpass::QL::BoundingBox.from_wkt(wkt)
 
 request      = Underpass::QL::Request.new(op_query, op_bbox)
 api_response = Underpass::Client.perform(request)
