@@ -14,9 +14,10 @@ wkt = <<-WKT
     23.65   47.65
   ))
 WKT
-op_query     = 'relation["name"="Árok"];'
-op_bbox      = Underpass::QL::BoundingBox.from_wkt(wkt)
-request      = Underpass::QL::Request.new(op_query, op_bbox)
+op_query = 'relation["name"="Árok"];'
+op_bbox = Underpass::QL::BoundingBox.from_wkt(wkt)
+request = Underpass::QL::Request.new(op_query, op_bbox)
 api_response = Underpass::Client.perform(request)
-response     = Underpass::QL::Response.new(api_response)
-matcher      = Underpass::Matcher.new(response)
+response = Underpass::QL::Response.new(api_response)
+matcher = Underpass::Matcher.new(response)
+matcher

@@ -8,39 +8,47 @@ module Underpass
       @nodes     = response.nodes
       @ways      = response.ways
       @relations = response.relations
-
-      @matches   = []
+      @matches   = nil
     end
 
     def matches
-      return @matches if @matches.any?
-
-      @nodes.each_value do |node|
-        @matches << point_from_node(node) if node.key?(:tags)
+      unless @matches
+        @matches = []
+        add_node_matches
+        add_way_matches
+        add_relation_matches
       end
-
-      @ways.each_value do |way|
-        @matches << way_match(way) if way.key?(:tags)
-      end
-
-      @relations.each_value do |relation|
-        @matches.push(*relation_match(relation)) if relation.key?(:tags)
-      end
-
       @matches
     end
 
     private
 
+    def add_node_matches
+      @nodes.each_value do |node|
+        @matches << point_from_node(node) if node.key?(:tags)
+      end
+    end
+
+    def add_way_matches
+      @ways.each_value do |way|
+        @matches << way_match(way) if way.key?(:tags)
+      end
+    end
+
+    def add_relation_matches
+      @relations.each_value do |relation|
+        @matches.push(*relation_match(relation)) if relation.key?(:tags)
+      end
+    end
+
     def relation_match(relation)
       matches = []
       relation[:members].each do |member|
-        ref = member[:ref]
         case member[:type]
         when 'node'
-          matches << point_from_node(@nodes[ref])
+          matches << point_from_node(@nodes[member[:ref]])
         when 'way'
-          matches << way_match(@ways[ref])
+          matches << way_match(@ways[member[:ref]])
         end
       end
       matches
