@@ -25,7 +25,7 @@ module Underpass
 
     def add_node_matches
       @nodes.each_value do |node|
-        @matches << point_from_node(node) if node.key?(:tags)
+        @matches << Shape.point_from_node(node) if node.key?(:tags)
       end
     end
 
@@ -46,7 +46,7 @@ module Underpass
       relation[:members].each do |member|
         case member[:type]
         when 'node'
-          matches << point_from_node(@nodes[member[:ref]])
+          matches << Shape.point_from_node(@nodes[member[:ref]])
         when 'way'
           matches << way_match(@ways[member[:ref]])
         end
@@ -55,27 +55,11 @@ module Underpass
     end
 
     def way_match(way)
-      if open_way?(way)
-        polygon_from_way(way, @nodes)
+      if Shape.open_way?(way)
+        Shape.polygon_from_way(way, @nodes)
       else
-        line_string_from_way(way, @nodes)
+        Shape.line_string_from_way(way, @nodes)
       end
-    end
-
-    def open_way?(way)
-      Underpass::Shape.open_way?(way)
-    end
-
-    def point_from_node(node)
-      Underpass::Shape.point_from_node(node)
-    end
-
-    def polygon_from_way(way, nodes)
-      Underpass::Shape.polygon_from_way(way, nodes)
-    end
-
-    def line_string_from_way(way, nodes)
-      Underpass::Shape.line_string_from_way(way, nodes)
     end
   end
 end
