@@ -6,10 +6,12 @@ require 'underpass'
 
 describe Underpass::Matcher do
   let(:response_double) { double }
+  let(:relations) { {} }
 
   before do
     allow(response_double).to receive(:nodes).and_return(nodes)
     allow(response_double).to receive(:ways).and_return(ways)
+    allow(response_double).to receive(:relations).and_return(relations)
   end
 
   subject { described_class.new(response_double) }
