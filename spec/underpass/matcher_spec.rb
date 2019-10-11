@@ -6,7 +6,6 @@ require 'underpass'
 
 describe Underpass::Matcher do
   let(:response_double) { double }
-  let(:relations) { {} }
 
   before do
     allow(response_double).to receive(:nodes).and_return(nodes)
@@ -26,6 +25,7 @@ describe Underpass::Matcher do
         }
       end
       let(:ways) { {} }
+      let(:relations) { {} }
 
       it 'calls point_from_node for nodes with tags and returns matches' do
         expect(Underpass::Shape).to receive(:point_from_node)
@@ -36,6 +36,7 @@ describe Underpass::Matcher do
 
     context 'there are ways with tags' do
       let(:nodes) { {} }
+      let(:relations) { {} }
 
       context 'ways are polygons' do
         let(:ways) do
@@ -66,6 +67,59 @@ describe Underpass::Matcher do
           expect(Underpass::Shape).to receive(:line_string_from_way)
             .twice.and_return('test')
           expect(subject.matches.size).to eq(2)
+        end
+      end
+    end
+
+    context 'there are relations with tags' do
+      let(:nodes) { {} }
+      let(:ways) { {} }
+      
+      context 'relation members are nodes' do
+        let(:relations) do
+          {
+            a: {
+              members: [
+                {
+                  type: 'node'
+                },
+                {
+                  type: 'node'
+                }
+              ],
+              tags: {}
+            },
+          }
+        end
+
+        it 'calls point_from_node and returns matches' do
+          expect(Underpass::Shape).to receive(:point_from_node).
+            twice.and_return('test')
+            expect(subject.matches.size).to eq(2)
+        end
+      end
+
+      context 'relation members are ways' do
+        let(:relations) do
+          {
+            a: {
+              members: [
+                {
+                  type: 'way'
+                },
+                {
+                  type: 'way'
+                }
+              ],
+              tags: {}
+            },
+          }
+        end
+
+        it 'calls way_match and returns matches' do
+          expect(subject).to receive(:way_match).
+            twice.and_return('test')
+            expect(subject.matches.size).to eq(2)
         end
       end
     end
