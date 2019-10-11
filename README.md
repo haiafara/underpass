@@ -60,6 +60,21 @@ Further tips:
 * To test drive the library run `bundle console`
 * Run `guard` in the project directory, it'll watch for file changes and run Rubocop and RSpec for real time feedback
 
+## Related Documentation
+
+Things to read if you want to get familiar with [RGeo](https://github.com/rgeo/rgeo)
+
+* [RGeo RDoc](https://rdoc.info/github/rgeo/rgeo/)
+* [Geo-Rails Part 1: A Call to Revolution](https://daniel-azuma.com/articles/georails/part-1)
+* [Geo-Rails Part 2: Setting Up a Geospatial Rails App](https://daniel-azuma.com/articles/georails/part-2)
+* [Geo-Rails Part 3: Spatial Data Types with RGeo](https://daniel-azuma.com/articles/georails/part-3)
+* [Geo-Rails Part 4: Coordinate Systems and Projections](https://daniel-azuma.com/articles/georails/part-4)
+* [Geo-Rails Part 5: Spatial Data Formats](https://daniel-azuma.com/articles/georails/part-5)
+* [Geo-Rails Part 6: Scaling Spatial Applications](https://daniel-azuma.com/articles/georails/part-6)
+* [Geo-Rails Part 7: Geometry vs. Geography, or, How I Learned To Stop Worrying And Love Projections](https://daniel-azuma.com/articles/georails/part-7)
+* [Geo-Rails Part 8: ZCTA Lookup, A Worked Example](https://daniel-azuma.com/articles/georails/part-8)
+* [Geo-Rails Part 9: The PostGIS spatial_ref_sys Table and You](https://daniel-azuma.com/articles/georails/part-9)
+
 ## License
 
 underpass is released under the MIT License. See the [LICENSE file](LICENSE) for further details.
