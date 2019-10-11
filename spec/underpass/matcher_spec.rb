@@ -74,7 +74,7 @@ describe Underpass::Matcher do
     context 'there are relations with tags' do
       let(:nodes) { {} }
       let(:ways) { {} }
-      
+
       context 'relation members are nodes' do
         let(:relations) do
           {
@@ -88,14 +88,14 @@ describe Underpass::Matcher do
                 }
               ],
               tags: {}
-            },
+            }
           }
         end
 
         it 'calls point_from_node and returns matches' do
-          expect(Underpass::Shape).to receive(:point_from_node).
-            twice.and_return('test')
-            expect(subject.matches.size).to eq(2)
+          expect(Underpass::Shape).to receive(:point_from_node)
+            .twice.and_return('test')
+          expect(subject.matches.size).to eq(2)
         end
       end
 
@@ -112,14 +112,14 @@ describe Underpass::Matcher do
                 }
               ],
               tags: {}
-            },
+            }
           }
         end
 
         it 'calls way_match and returns matches' do
-          expect(subject).to receive(:way_match).
-            twice.and_return('test')
-            expect(subject.matches.size).to eq(2)
+          expect(subject).to receive(:way_match)
+            .twice.and_return('test')
+          expect(subject.matches.size).to eq(2)
         end
       end
     end
