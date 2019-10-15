@@ -4,46 +4,62 @@ module Underpass
   # Provides matches given a response object
   # By matches we understand response elements that have a tags key
   class Matcher
-    attr_reader :matches
-
     def initialize(response)
-      @nodes   = response.nodes
-      @ways    = response.ways
-      @matches = []
+      @nodes     = response.nodes
+      @ways      = response.ways
+      @relations = response.relations
+      @matches   = nil
+    end
 
-      @nodes.each_value do |node|
-        @matches << point_from_node(node) if node.key?(:tags)
+    def matches
+      unless @matches
+        @matches = []
+        add_node_matches
+        add_way_matches
+        add_relation_matches
       end
-
-      @ways.each_value do |way|
-        @matches << way_matches(way) if way.key?(:tags)
-      end
+      @matches
     end
 
     private
 
-    def way_matches(way)
-      if open_way?(way)
-        polygon_from_way(way, @nodes)
-      else
-        line_string_from_way(way, @nodes)
+    def add_node_matches
+      @nodes.each_value do |node|
+        @matches << Shape.point_from_node(node) if node.key?(:tags)
       end
     end
 
-    def open_way?(way)
-      Underpass::Shape.open_way?(way)
+    def add_way_matches
+      @ways.each_value do |way|
+        @matches << way_match(way) if way.key?(:tags)
+      end
     end
 
-    def point_from_node(node)
-      Underpass::Shape.point_from_node(node)
+    def add_relation_matches
+      @relations.each_value do |relation|
+        @matches.push(*relation_match(relation)) if relation.key?(:tags)
+      end
     end
 
-    def polygon_from_way(way, nodes)
-      Underpass::Shape.polygon_from_way(way, nodes)
+    def relation_match(relation)
+      matches = []
+      relation[:members].each do |member|
+        case member[:type]
+        when 'node'
+          matches << Shape.point_from_node(@nodes[member[:ref]])
+        when 'way'
+          matches << way_match(@ways[member[:ref]])
+        end
+      end
+      matches
     end
 
-    def line_string_from_way(way, nodes)
-      Underpass::Shape.line_string_from_way(way, nodes)
+    def way_match(way)
+      if Shape.open_way?(way)
+        Shape.polygon_from_way(way, @nodes)
+      else
+        Shape.line_string_from_way(way, @nodes)
+      end
     end
   end
 end

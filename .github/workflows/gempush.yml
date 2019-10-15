@@ -3,8 +3,8 @@ name: Ruby Gem
 on: [push]
 
 jobs:
-  build:
-    name: Specs
+  rubocop:
+    name: Rubocop
     runs-on: ubuntu-latest
 
     steps:
@@ -13,7 +13,26 @@ jobs:
     - name: Set up Ruby 2.6
       uses: actions/setup-ruby@v1
       with:
-        version: 2.6.x
+        ruby-version: 2.6.x
+        
+    - name: Run Rubocop
+      run: |
+        bundle install
+        bundle exec rubocop
+
+  rspec:
+    name: Specs
+    runs-on: ubuntu-latest
+
+    needs: rubocop
+
+    steps:
+    - uses: actions/checkout@master
+    
+    - name: Set up Ruby 2.6
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: 2.6.x
         
     - name: Run specs
       run: |
@@ -24,7 +43,7 @@ jobs:
     name: Publish
     runs-on: ubuntu-latest  
     
-    needs: build
+    needs: rspec
     
     steps:
     - uses: actions/checkout@master
@@ -32,7 +51,7 @@ jobs:
     - name: Set up Ruby 2.6
       uses: actions/setup-ruby@v1
       with:
-        version: 2.6.x
+        ruby-version: 2.6.x
     
     - name: Publish to RubyGems
       if: github.ref == 'master'
