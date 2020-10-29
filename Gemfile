@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 
 group :test do
-  gem 'coveralls', require: false
+  gem 'coveralls_reborn', require: false
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false
   gem 'simplecov', require: false

@@ -16,7 +16,7 @@ describe Underpass::QL::Request do
       ).to eq(query)
       expect(
         subject.instance_variable_get(:@global_bbox)
-      ).to eq('[' + bbox + ']')
+      ).to eq("[#{bbox}]")
     end
   end
 
