@@ -1,7 +1,7 @@
 # underpass
 
 [![Gem Version](https://badge.fury.io/rb/underpass.svg)](https://badge.fury.io/rb/underpass)
-[![Build Status](https://www.travis-ci.org/haiafara/underpass.svg?branch=master)](https://www.travis-ci.org/haiafara/underpass)
+[![Build Status](https://github.com/haiafara/underpass/workflows/Ruby%20Gem/badge.svg)](https://github.com/haiafara/underpass/actions?query=workflow%3A%22Ruby+Gem%22)
 [![Coverage Status](https://coveralls.io/repos/github/haiafara/underpass/badge.svg?branch=master)](https://coveralls.io/github/haiafara/underpass?branch=master)
 
 A library that makes it easy to query the [Overpass API](https://wiki.openstreetmap.org/wiki/Overpass_API) and translate its responses into [RGeo](https://github.com/rgeo/rgeo) objects. It supports queries written in the [Overpass QL](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL).
