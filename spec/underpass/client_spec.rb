@@ -11,7 +11,7 @@ describe Underpass::Client do
   describe '#perform' do
     it 'posts the query to the API endpoint' do
       allow(request_double).to receive(:to_query).and_return(
-        query + ' ' + bbox
+        "#{query} #{bbox}"
       )
       stub = stub_request(:post, 'https://overpass-api.de/api/interpreter')
              .with(body: /#{bbox}/)
