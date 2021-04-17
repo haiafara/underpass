@@ -6,7 +6,7 @@ require File.expand_path('lib/underpass/version', __dir__)
 Gem::Specification.new do |s|
   s.name = 'underpass'
   s.version = Underpass.gem_version
-  
+
   s.summary = <<-SUMMARY
     A library that translates Overpass API responses into RGeo objects
   SUMMARY
