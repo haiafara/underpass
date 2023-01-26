@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.4.0'
   s.rubygems_version = '3.0.1'
 
-  s.add_runtime_dependency 'rgeo', '2.3.0'
+  s.add_runtime_dependency 'rgeo', '3.0.0'
 
   s.add_development_dependency 'guard', '~> 2.16.1', '>= 2.15.0'
   s.add_development_dependency 'guard-rspec', '~> 4.7.3', '>= 4.7.3'
