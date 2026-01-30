@@ -4,19 +4,20 @@ module Underpass
   # Provides matches given a response object
   # By matches we understand response elements that have a tags key
   class Matcher
-    def initialize(response)
+    def initialize(response, requested_types = nil)
       @nodes     = response.nodes
       @ways      = response.ways
       @relations = response.relations
       @matches   = nil
+      @requested_types = requested_types || %w[node way relation]
     end
 
     def matches
       unless @matches
         @matches = []
-        add_node_matches
-        add_way_matches
-        add_relation_matches
+        add_node_matches if @requested_types.include?('node')
+        add_way_matches if @requested_types.include?('way')
+        add_relation_matches if @requested_types.include?('relation')
       end
       @matches
     end

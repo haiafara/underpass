@@ -8,6 +8,7 @@ require 'underpass/matcher'
 require 'underpass/shape'
 require 'underpass/ql/bounding_box'
 require 'underpass/ql/query'
+require 'underpass/ql/query_analyzer'
 require 'underpass/ql/request'
 require 'underpass/ql/response'
 
