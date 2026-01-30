@@ -16,12 +16,12 @@ Or put it in your Gemfile:
 
     gem 'underpass'
 
-## Usage
+## Quick Start
 
 ```ruby
-# Require the library if it's not autoloaded
 require 'underpass'
-# Define a polygon to be used as bounding box
+
+# Define a bounding box polygon
 wkt = <<-WKT
   POLYGON ((
     23.669 47.65,
@@ -31,19 +31,246 @@ wkt = <<-WKT
     23.669 47.65
   ))
 WKT
-# Create the bounding box in which the query will run
 bbox = RGeo::Geographic.spherical_factory.parse_wkt(wkt)
-# Define the Overpass QL query
+
+# Query using raw Overpass QL
 query = 'way["heritage:operator"="lmi"]["ref:ro:lmi"="MM-II-m-B-04508"];'
-# Perform the query and get your matches
-matches = Underpass::QL::Query.perform(bbox, query)
+features = Underpass::QL::Query.perform(bbox, query)
+
+# Each result is a Feature with geometry and OSM tags
+features.each do |f|
+  puts f.geometry.as_text     # => "POLYGON ((...)"
+  puts f.properties[:name]    # => "Some Heritage Building"
+  puts f.id                   # => 123456
+  puts f.type                 # => "way"
+end
 ```
 
 See [more usage examples](usage-examples.md).
 
+## Feature Objects
+
+All query results are returned as `Underpass::Feature` objects that pair an RGeo
+geometry with OpenStreetMap metadata:
+
+```ruby
+feature.geometry   # RGeo geometry (Point, LineString, Polygon, Multi*)
+feature.properties # Hash of OSM tags, e.g. { name: "...", amenity: "..." }
+feature.id         # OSM element ID (Integer)
+feature.type       # "node", "way", or "relation"
+```
+
+## Query Builder DSL
+
+Instead of writing raw Overpass QL strings, you can use the chainable Ruby DSL:
+
+```ruby
+# Simple query
+query = Underpass::QL::Builder.new
+          .node(amenity: 'restaurant')
+          .to_ql
+# => 'node["amenity"="restaurant"];'
+
+# Multiple types
+query = Underpass::QL::Builder.new
+          .node(amenity: 'restaurant')
+          .way(highway: 'primary')
+          .to_ql
+# => "node[\"amenity\"=\"restaurant\"];\nway[\"highway\"=\"primary\"];"
+
+# Multiple tag filters
+query = Underpass::QL::Builder.new
+          .way('heritage:operator': 'lmi', 'ref:ro:lmi': 'MM-II-m-B-04508')
+          .to_ql
+# => 'way["heritage:operator"="lmi"]["ref:ro:lmi"="MM-II-m-B-04508"];'
+
+# nwr (node/way/relation) shorthand
+query = Underpass::QL::Builder.new
+          .nwr(name: 'Central Park')
+          .to_ql
+# => 'nwr["name"="Central Park"];'
+
+# Pass a Builder directly to Query.perform
+builder = Underpass::QL::Builder.new.way(building: 'yes')
+features = Underpass::QL::Query.perform(bbox, builder)
+```
+
+## Proximity Queries (Around)
+
+Find elements within a radius (in meters) of a point:
+
+```ruby
+# Using coordinates
+query = Underpass::QL::Builder.new
+          .node(amenity: 'restaurant')
+          .around(500, 47.65, 23.69)
+          .to_ql
+# => 'node["amenity"="restaurant"](around:500,47.65,23.69);'
+
+# Using an RGeo point
+point = RGeo::Geographic.spherical_factory(srid: 4326).point(23.69, 47.65)
+query = Underpass::QL::Builder.new
+          .node(amenity: 'cafe')
+          .around(1000, point)
+          .to_ql
+```
+
+The `around` filter is appended to all statements in the builder.
+
+## Area Queries
+
+Query within a named geographic area instead of a bounding box:
+
+```ruby
+features = Underpass::QL::Query.perform_in_area(
+  'Romania',
+  'node["amenity"="restaurant"];'
+)
+```
+
+This generates an Overpass query using the `area` statement:
+
+```
+[out:json][timeout:25];
+area["name"="Romania"]->.searchArea;
+(
+  node["amenity"="restaurant"](area.searchArea);
+);
+out body;
+>;
+out skel qt;
+```
+
+Builder objects work with `perform_in_area` as well:
+
+```ruby
+builder = Underpass::QL::Builder.new.node(amenity: 'restaurant')
+features = Underpass::QL::Query.perform_in_area('Romania', builder)
+```
+
+## Relation Support
+
+### Multipolygon Relations
+
+Relations tagged `type=multipolygon` are automatically assembled into proper RGeo
+polygons with holes. Outer member ways are chained into exterior rings, inner member
+ways become interior rings (holes). Multiple outer rings produce a `MultiPolygon`.
+
+```ruby
+query = 'relation["type"="multipolygon"]["name"="Some Lake"];'
+features = Underpass::QL::Query.perform(bbox, query)
+
+feature = features.first
+feature.geometry
+# => RGeo::Geographic::SphericalPolygonImpl (with interior rings for islands)
+```
+
+### Route Relations
+
+Relations tagged `type=route` (bus lines, hiking trails, etc.) are assembled into
+`MultiLineString` geometries:
+
+```ruby
+query = 'relation["type"="route"]["name"="Bus 42"];'
+features = Underpass::QL::Query.perform(bbox, query)
+
+feature = features.first
+feature.geometry
+# => RGeo::Geographic::SphericalMultiLineStringImpl
+```
+
+### Other Relations
+
+Relations without a recognized type tag are expanded into individual member
+geometries (the previous behavior), with each member geometry wrapped in a Feature
+carrying the parent relation's tags.
+
+## GeoJSON Export
+
+Convert results to GeoJSON for use with web mapping libraries:
+
+```ruby
+features = Underpass::QL::Query.perform(bbox, query)
+geojson = Underpass::GeoJSON.encode(features)
+
+# geojson is a Hash:
+# {
+#   "type" => "FeatureCollection",
+#   "features" => [
+#     {
+#       "type" => "Feature",
+#       "geometry" => { "type" => "Point", "coordinates" => [23.69, 47.65] },
+#       "properties" => { "name" => "...", "amenity" => "restaurant" },
+#       "id" => 123456
+#     },
+#     ...
+#   ]
+# }
+
+# Serialize to JSON
+require 'json'
+File.write('output.geojson', JSON.pretty_generate(geojson))
+```
+
+This requires the `rgeo-geojson` gem, which is included as a dependency.
+
+## Result Filtering
+
+Filter results by tag properties after querying, without modifying the Overpass query:
+
+```ruby
+features = Underpass::QL::Query.perform(bbox, 'nwr["amenity"];')
+
+# Exact match
+restaurants = Underpass::Filter.new(features).where(amenity: 'restaurant')
+
+# Regex match
+italian = Underpass::Filter.new(features).where(cuisine: /italian/i)
+
+# Multiple acceptable values (OR)
+food = Underpass::Filter.new(features).where(amenity: %w[restaurant cafe bar])
+
+# Multiple conditions (AND)
+chinese_restaurants = Underpass::Filter.new(features).where(
+  amenity: 'restaurant',
+  cuisine: 'chinese'
+)
+
+# Rejection
+no_banks = Underpass::Filter.new(features).reject(amenity: 'bank')
+```
+
+## Lazy Enumeration
+
+For large result sets, use `lazy_matches` to avoid building the entire array in memory:
+
+```ruby
+matcher = Underpass::Matcher.new(response, requested_types)
+
+# Process results lazily
+matcher.lazy_matches.each do |feature|
+  # Each Feature is created on demand
+  puts feature.properties[:name]
+end
+
+# Take only the first 10
+first_ten = matcher.lazy_matches.first(10)
+
+# Chain lazy operations
+matcher.lazy_matches
+       .select { |f| f.properties[:amenity] == 'restaurant' }
+       .map(&:geometry)
+       .first(5)
+```
+
+`Matcher#matches` is implemented in terms of `lazy_matches.to_a`, so eager
+evaluation still works identically.
+
 ## Query Analyzer
 
-The library includes a query analyzer that automatically determines which types of matches (node, way, or relation) you're interested in based on your query. This ensures that only the requested match types are returned.
+The library includes a query analyzer that automatically determines which types of
+matches (node, way, or relation) you're interested in based on your query. This
+ensures that only the requested match types are returned.
 
 ### How it works
 
@@ -57,22 +284,113 @@ The library includes a query analyzer that automatically determines which types 
 Query for ways only:
 ```ruby
 query = 'way["highway"="primary"];'
-matches = Underpass::QL::Query.perform(bbox, query)
+features = Underpass::QL::Query.perform(bbox, query)
 # Returns only way matches
 ```
 
 Query for nodes and relations:
 ```ruby
 query = 'node["amenity"="restaurant"]; relation["type"="multipolygon"];'
-matches = Underpass::QL::Query.perform(bbox, query)
+features = Underpass::QL::Query.perform(bbox, query)
 # Returns node and relation matches, but no way matches
 ```
 
 Query with unrecognized type (returns all types):
 ```ruby
 query = 'nwr["name"="Example"];'  # nwr is not a specific type
-matches = Underpass::QL::Query.perform(bbox, query)
+features = Underpass::QL::Query.perform(bbox, query)
 # Returns all match types (node, way, and relation)
+```
+
+## Configuration
+
+### Custom API Endpoint
+
+Point to a private Overpass instance instead of the public one:
+
+```ruby
+Underpass.configure do |c|
+  c.api_endpoint = 'https://my-overpass.example.com/api/interpreter'
+end
+```
+
+### Custom Timeout
+
+Change the Overpass query timeout (default: 25 seconds):
+
+```ruby
+Underpass.configure do |c|
+  c.timeout = 60
+end
+```
+
+### Reset Configuration
+
+```ruby
+Underpass.reset_configuration!
+```
+
+## Error Handling
+
+The client automatically retries on transient errors with exponential backoff:
+
+- **HTTP 429** (rate limited) -- retries up to 3 times, then raises `Underpass::RateLimitError`
+- **HTTP 504** (gateway timeout) -- retries up to 3 times, then raises `Underpass::TimeoutError`
+- **Other errors** -- raises `Underpass::ApiError` immediately
+
+All errors inherit from `Underpass::Error`, which inherits from `StandardError`.
+
+```ruby
+begin
+  features = Underpass::QL::Query.perform(bbox, query)
+rescue Underpass::RateLimitError
+  puts "Rate limited by the Overpass API, try again later"
+rescue Underpass::TimeoutError
+  puts "Query timed out, try a smaller bounding box"
+rescue Underpass::ApiError => e
+  puts "API error: #{e.message}"
+end
+```
+
+## Response Caching
+
+Enable in-memory caching to avoid redundant API calls during development:
+
+```ruby
+# Enable with a 10-minute TTL
+Underpass.cache = Underpass::Cache.new(ttl: 600)
+
+# Subsequent identical queries return cached responses
+features = Underpass::QL::Query.perform(bbox, query)  # hits API
+features = Underpass::QL::Query.perform(bbox, query)  # returns cached
+
+# Clear the cache
+Underpass.cache.clear
+
+# Disable caching
+Underpass.cache = nil
+```
+
+Caching is disabled by default. Cache keys are SHA-256 digests of the full query
+string, so different queries always produce different keys.
+
+## Recurse Operators
+
+The Overpass recurse operator can be configured per request. The default (`>`)
+fetches child elements, which is needed to resolve way nodes:
+
+```ruby
+# Default: child recurse (>)
+request = Underpass::QL::Request.new(query, bbox)
+
+# Descendant recurse (>>)
+request = Underpass::QL::Request.new(query, bbox, recurse: '>>')
+
+# Parent recurse (<)
+request = Underpass::QL::Request.new(query, bbox, recurse: '<')
+
+# No recurse
+request = Underpass::QL::Request.new(query, bbox, recurse: nil)
 ```
 
 ## To Do

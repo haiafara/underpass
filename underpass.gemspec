@@ -30,4 +30,5 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 3.4.0'
 
   s.add_dependency 'rgeo', '~> 3.1'
+  s.add_dependency 'rgeo-geojson', '~> 2.2'
 end

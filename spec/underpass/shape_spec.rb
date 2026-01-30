@@ -2,6 +2,7 @@
 
 require 'spec_helper'
 require 'support/nodes_and_ways'
+require 'support/relations'
 require 'underpass'
 
 describe Underpass::Shape do
@@ -66,6 +67,44 @@ describe Underpass::Shape do
       expect(point.as_text).to eq(
         'POINT (-1.0 1.0)'
       )
+    end
+  end
+
+  describe '.multipolygon_from_relation' do
+    let(:ext_nodes) { Relations::EXTENDED_NODES }
+    let(:ext_ways) { Relations::EXTENDED_WAYS }
+
+    context 'with a single outer and one inner ring' do
+      let(:relation) { Relations::MULTIPOLYGON_RELATION }
+
+      it 'returns a polygon with a hole' do
+        result = described_class.multipolygon_from_relation(relation, ext_ways, ext_nodes)
+        expect(result).to be_a(RGeo::Geographic::SphericalPolygonImpl)
+        expect(result.exterior_ring.num_points).to eq(5)
+        expect(result.interior_rings.size).to eq(1)
+      end
+    end
+
+    context 'with multiple outer rings' do
+      let(:relation) { Relations::MULTI_OUTER_RELATION }
+
+      it 'returns a multi polygon' do
+        result = described_class.multipolygon_from_relation(relation, ext_ways, ext_nodes)
+        expect(result).to be_a(RGeo::Geographic::SphericalMultiPolygonImpl)
+        expect(result.num_geometries).to eq(2)
+      end
+    end
+  end
+
+  describe '.multi_line_string_from_relation' do
+    let(:ext_nodes) { Relations::EXTENDED_NODES }
+    let(:ext_ways) { Relations::EXTENDED_WAYS }
+    let(:relation) { Relations::ROUTE_RELATION }
+
+    it 'returns a multi line string from route members' do
+      result = described_class.multi_line_string_from_relation(relation, ext_ways, ext_nodes)
+      expect(result).to be_a(RGeo::Geographic::SphericalMultiLineStringImpl)
+      expect(result.num_geometries).to eq(2)
     end
   end
 end
