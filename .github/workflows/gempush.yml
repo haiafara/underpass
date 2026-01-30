@@ -1,35 +1,14 @@
 name: Ruby Gem
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
-  test:
-    name: Tests on Ruby ${{ matrix.ruby-version }}
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        ruby-version: ['3.4']
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Ruby ${{ matrix.ruby-version }}
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby-version }}
-          bundler-cache: true
-
-      - name: Run rubocop
-        run: bundle exec rubocop
-
-      - name: Run tests
-        run: bundle exec rspec
-
   publish:
     name: Publish to RubyGems
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-    needs: test
 
     steps:
       - uses: actions/checkout@v4
@@ -38,6 +17,13 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.4'
+          bundler-cache: true
+
+      - name: Run rubocop
+        run: bundle exec rubocop
+
+      - name: Run tests
+        run: bundle exec rspec
 
       - name: Publish to RubyGems
         run: |
