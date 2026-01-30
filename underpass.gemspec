@@ -21,18 +21,13 @@ Gem::Specification.new do |s|
   s.licenses = ['MIT']
   s.metadata = {
     'source_code_uri' => s.homepage,
-    'bug_tracker_uri' => "#{s.homepage}/issues"
+    'bug_tracker_uri' => "#{s.homepage}/issues",
+    'rubygems_mfa_required' => 'true'
   }
 
   s.require_paths = ['lib']
   s.files = Dir['lib/**/*.rb', 'LICENSE', 'README.md'].to_a
-  s.required_ruby_version = '>= 2.4.0'
-  s.rubygems_version = '3.0.1'
+  s.required_ruby_version = '>= 3.4.0'
 
-  s.add_runtime_dependency 'rgeo', '2.3.0'
-
-  s.add_development_dependency 'guard', '~> 2.16.1', '>= 2.15.0'
-  s.add_development_dependency 'guard-rspec', '~> 4.7.3', '>= 4.7.3'
-  s.add_development_dependency 'guard-rubocop', '~> 1.4.0', '>= 1.3.0'
-  s.add_development_dependency 'rspec', '~> 3.8', '>= 3.8.0'
+  s.add_dependency 'rgeo', '~> 3.1'
 end

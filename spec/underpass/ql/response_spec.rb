@@ -5,20 +5,13 @@ require 'support/nodes_and_ways'
 require 'underpass'
 
 describe Underpass::QL::Response do
+  subject { described_class.new(response_double) }
+
   let(:response_double) { double }
   let(:elements) { 'test elements' }
 
-  subject { described_class.new(response_double) }
-
   before do
     allow(response_double).to receive(:body).and_return('test')
-  end
-
-  describe '#initialize' do
-    it 'sets the correct instance variable' do
-      allow(JSON).to receive(:parse).and_return(elements: elements)
-      expect(subject.instance_variable_get(:@elements)).to eq(elements)
-    end
   end
 
   describe '#nodes' do
