@@ -4,10 +4,10 @@ require 'spec_helper'
 require 'underpass'
 
 describe Underpass::QL::BoundingBox do
+  subject { described_class }
+
   let(:wkt) { 'POLYGON ((1.0 10.0, 2.0 10.0, 2.0 11.0, 1.0 11.00, 1.0 10.0))' }
   let(:bbox) { 'bbox:10.0,1.0,11.0,2.0' }
-
-  subject { described_class }
 
   describe '#from_wkt' do
     it 'returns the correct bounding box string' do

@@ -5,8 +5,9 @@ require 'underpass'
 
 # aka the integration spec
 describe Underpass::QL::Query do
-  let(:bbox) { double }
   subject { described_class }
+
+  let(:bbox) { double }
 
   # bounding box is irelevant since it's only used on Overpass
   before do
@@ -57,27 +58,27 @@ describe Underpass::QL::Query do
         )
       end
     end
-  end
 
-  context 'when a node is returned' do
-    before do
-      stub_request(:post, 'https://overpass-api.de/api/interpreter')
-        .to_return(
-          body: File.read('spec/support/files/response-node.json'),
-          status: 200
+    context 'when a node is returned' do
+      before do
+        stub_request(:post, 'https://overpass-api.de/api/interpreter')
+          .to_return(
+            body: File.read('spec/support/files/response-node.json'),
+            status: 200
+          )
+      end
+
+      it 'returns the correct results' do
+        op_query = 'node["something"];'
+        results = subject.perform(bbox, op_query)
+        expect(results.size).to eq(1)
+        expect(results.first.class).to eq(
+          RGeo::Geographic::SphericalPointImpl
         )
-    end
-
-    it 'returns the correct results' do
-      op_query = 'node["something"];'
-      results = subject.perform(bbox, op_query)
-      expect(results.size).to eq(1)
-      expect(results.first.class).to eq(
-        RGeo::Geographic::SphericalPointImpl
-      )
-      expect(results.first.as_text).to eq(
-        'POINT (1.0 -1.0)'
-      )
+        expect(results.first.as_text).to eq(
+          'POINT (1.0 -1.0)'
+        )
+      end
     end
   end
 end
