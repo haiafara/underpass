@@ -41,6 +41,40 @@ matches = Underpass::QL::Query.perform(bbox, query)
 
 See [more usage examples](usage-examples.md).
 
+## Query Analyzer
+
+The library includes a query analyzer that automatically determines which types of matches (node, way, or relation) you're interested in based on your query. This ensures that only the requested match types are returned.
+
+### How it works
+
+1. The query is trimmed and split on semicolons (`;`)
+2. For each line, the analyzer looks at the first word
+3. If the first word is `node`, `way`, or `relation`, that type is added to the requested match types
+4. The library returns only matches of the requested types that have the `tags` key
+
+### Examples
+
+Query for ways only:
+```ruby
+query = 'way["highway"="primary"];'
+matches = Underpass::QL::Query.perform(bbox, query)
+# Returns only way matches
+```
+
+Query for nodes and relations:
+```ruby
+query = 'node["amenity"="restaurant"]; relation["type"="multipolygon"];'
+matches = Underpass::QL::Query.perform(bbox, query)
+# Returns node and relation matches, but no way matches
+```
+
+Query with unrecognized type (returns all types):
+```ruby
+query = 'nwr["name"="Example"];'  # nwr is not a specific type
+matches = Underpass::QL::Query.perform(bbox, query)
+# Returns all match types (node, way, and relation)
+```
+
 ## To Do
 
 Have a look at the [issue tracker](https://github.com/haiafara/underpass/issues).
