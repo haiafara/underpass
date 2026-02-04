@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
   s.metadata = {
     'source_code_uri' => s.homepage,
     'bug_tracker_uri' => "#{s.homepage}/issues",
+    'documentation_uri' => 'https://haiafara.github.io/underpass',
     'rubygems_mfa_required' => 'true'
   }
 

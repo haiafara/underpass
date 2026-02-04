@@ -1,5 +1,6 @@
-# documentation
+# documentation (YARD output)
 doc
+.yardoc
 
 # coverage report
 coverage

@@ -15,4 +15,8 @@ group :test do
   gem 'webmock', '~> 3.26'
 end
 
+group :doc do
+  gem 'yard', require: false
+end
+
 gemspec

@@ -1,12 +1,27 @@
 # frozen_string_literal: true
 
 module Underpass
+  # Namespace for Overpass Query Language related classes.
   module QL
-    # Provides a shortcut method that makes it easy to work with the library
+    # High-level entry point for querying the Overpass API.
+    #
+    # Glues together {Request}, {Client}, {Response}, {QueryAnalyzer}, and
+    # {Matcher} to provide a single-call interface.
+    #
+    # @example Query with a bounding box
+    #   features = Underpass::QL::Query.perform(bbox, 'way["building"="yes"];')
+    #
+    # @example Query with a named area
+    #   features = Underpass::QL::Query.perform_in_area('Romania', 'node["place"="city"];')
     class Query
-      # Shortcut method that glues together the whole library.
-      # * +bounding_box+ an RGeo polygon
-      # * +query+ an Overpass QL query string or a Builder instance
+      # Queries the Overpass API within a bounding box.
+      #
+      # @param bounding_box [RGeo::Feature::Geometry] an RGeo polygon defining the search area
+      # @param query [String, Builder] an Overpass QL query string or a {Builder} instance
+      # @return [Array<Feature>] the matched features
+      # @raise [RateLimitError] when rate limited after exhausting retries
+      # @raise [TimeoutError] when the API times out after exhausting retries
+      # @raise [ApiError] when the API returns an unexpected error
       def self.perform(bounding_box, query)
         query_string     = resolve_query(query)
         op_bbox          = Underpass::QL::BoundingBox.from_geometry(bounding_box)
@@ -14,9 +29,14 @@ module Underpass
         execute(request, query_string)
       end
 
-      # Queries within a named area (e.g., "Romania") instead of a bounding box.
-      # * +area_name+ a string matching an OSM area name
-      # * +query+ an Overpass QL query string or a Builder instance
+      # Queries the Overpass API within a named area (e.g. "Romania").
+      #
+      # @param area_name [String] an OSM area name
+      # @param query [String, Builder] an Overpass QL query string or a {Builder} instance
+      # @return [Array<Feature>] the matched features
+      # @raise [RateLimitError] when rate limited after exhausting retries
+      # @raise [TimeoutError] when the API times out after exhausting retries
+      # @raise [ApiError] when the API returns an unexpected error
       def self.perform_in_area(area_name, query)
         query_string = resolve_query(query)
         request      = Underpass::QL::Request.new(query_string, nil, area_name: area_name)

@@ -48,6 +48,16 @@ end
 
 See [more usage examples](usage-examples.md).
 
+For comprehensive examples with real data covering all return types and functionality, see the [usage-examples.md](usage-examples.md) file which includes examples for:
+- Node queries (Point geometries) - restaurants, cafes, etc.
+- Way queries (LineString/Polygon geometries) - roads, buildings, parks
+- Relation queries (MultiPolygon/MultiLineString geometries) - lakes, bus routes
+- Area queries using `perform_in_area`
+- Around queries for proximity search
+- Builder DSL for constructing queries
+- Post-query filtering
+- GeoJSON export
+
 ## Feature Objects
 
 All query results are returned as `Underpass::Feature` objects that pair an RGeo
@@ -396,6 +406,23 @@ request = Underpass::QL::Request.new(query, bbox, recurse: nil)
 ## To Do
 
 Have a look at the [issue tracker](https://github.com/haiafara/underpass/issues).
+
+## Comprehensive Examples
+
+For detailed, working examples with real data that cover all return types and functionality of the library, see the [usage-examples.md](usage-examples.md) file. These examples demonstrate:
+
+- **Node queries** (Point geometries) - restaurants, cafes, bus stops
+- **Way queries** (LineString geometries) - primary roads, highways
+- **Way queries** (Polygon geometries) - buildings, parks
+- **Relation queries** (MultiPolygon geometries) - lakes with islands
+- **Relation queries** (MultiLineString geometries) - bus routes, hiking trails
+- **Area queries** - using `perform_in_area` instead of bounding boxes
+- **Around queries** - proximity search within a radius
+- **Builder DSL** - constructing queries programmatically
+- **Post-query filtering** - filtering results by properties
+- **GeoJSON export** - converting results for web mapping libraries
+
+All examples use real data from OpenStreetMap and have been tested to work correctly.
 
 ## How To Contribute
 

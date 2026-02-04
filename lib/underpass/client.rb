@@ -1,13 +1,28 @@
 # frozen_string_literal: true
 
 require 'digest'
+require 'net/http'
+require 'uri'
 
 module Underpass
-  # Runs the Overpass API query with retry logic for transient errors
+  # Runs the Overpass API query with retry logic for transient errors.
+  #
+  # Handles caching of responses and automatic retries with exponential
+  # backoff for rate limiting (429) and timeout (504) responses.
   class Client
+    # @return [Integer] default maximum number of retries
     MAX_RETRIES = 3
 
-    # Performs the API request with automatic retries for rate limiting and timeouts
+    # Performs the API request with automatic retries for rate limiting and timeouts.
+    #
+    # Results are cached when a {Cache} instance is configured via {Underpass.cache}.
+    #
+    # @param request [QL::Request] the prepared Overpass query request
+    # @param max_retries [Integer] maximum number of retry attempts
+    # @return [Net::HTTPResponse] the API response
+    # @raise [RateLimitError] when rate limited after exhausting retries
+    # @raise [TimeoutError] when the API times out after exhausting retries
+    # @raise [ApiError] when the API returns an unexpected error
     def self.perform(request, max_retries: MAX_RETRIES)
       cache_key = Digest::SHA256.hexdigest(request.to_query)
       cached = Underpass.cache&.fetch(cache_key)

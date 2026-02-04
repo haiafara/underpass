@@ -1,9 +1,17 @@
 # frozen_string_literal: true
 
 module Underpass
-  # Provides matches given a response object
-  # By matches we understand response elements that have a tags key
+  # Extracts matching elements from an Overpass API response.
+  #
+  # A "match" is a response element that has a +tags+ key, indicating it is
+  # a tagged OSM element rather than a bare geometry node. Each match is
+  # converted into a {Feature} with the appropriate RGeo geometry.
   class Matcher
+    # Creates a new matcher for the given response.
+    #
+    # @param response [QL::Response] a parsed API response
+    # @param requested_types [Array<String>, nil] element types to include
+    #   (e.g. +["node", "way"]+). Defaults to all types when +nil+.
     def initialize(response, requested_types = nil)
       @nodes     = response.nodes
       @ways      = response.ways
@@ -11,10 +19,16 @@ module Underpass
       @requested_types = requested_types || %w[node way relation]
     end
 
+    # Returns all matched features as an array.
+    #
+    # @return [Array<Feature>] the matched features
     def matches
       @matches ||= lazy_matches.to_a
     end
 
+    # Returns a lazy enumerator of matched features.
+    #
+    # @return [Enumerator::Lazy<Feature>] lazy enumerator of features
     def lazy_matches
       tagged_elements.lazy.flat_map { |element| features_for(element) }
     end

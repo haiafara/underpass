@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 module Underpass
-  # Chains way node sequences that share endpoints into complete rings
+  # Chains way node sequences that share endpoints into complete rings.
+  #
+  # Used internally by {Shape.multipolygon_from_relation} to merge multiple
+  # way segments into closed linear rings.
   class WayChain
+    # @api private
     MERGE_STRATEGIES = [
       ->(cur, seq) { cur.last == seq.first ? cur + seq[1..] : nil },
       ->(cur, seq) { cur.last == seq.last ? cur + seq.reverse[1..] : nil },
@@ -10,6 +14,10 @@ module Underpass
       ->(cur, seq) { cur.first == seq.first ? seq.reverse + cur[1..] : nil }
     ].freeze
 
+    # Creates a new WayChain from way IDs and a way lookup table.
+    #
+    # @param way_ids [Array<Integer>] IDs of the ways to chain
+    # @param ways [Hash{Integer => Hash}] way lookup table
     def initialize(way_ids, ways)
       @sequences = way_ids.filter_map do |way_id|
         way = ways[way_id]
@@ -19,6 +27,9 @@ module Underpass
       end
     end
 
+    # Merges node sequences that share endpoints into continuous rings.
+    #
+    # @return [Array<Array<Integer>>] the merged node ID sequences
     def merged_sequences
       return @sequences if @sequences.empty?
 
