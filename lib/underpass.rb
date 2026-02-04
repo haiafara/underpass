@@ -24,7 +24,8 @@ require 'underpass/ql/response'
 # and translate its responses into RGeo objects.
 #
 # @example Quick start
-#   bbox = RGeo::Geographic.spherical_factory.parse_wkt('POLYGON ((23.669 47.65, 23.725 47.65, 23.725 47.674, 23.669 47.674, 23.669 47.65))')
+#   wkt = 'POLYGON ((23.669 47.65, 23.725 47.65, 23.725 47.674, 23.669 47.674, 23.669 47.65))'
+#   bbox = RGeo::Geographic.spherical_factory.parse_wkt(wkt)
 #   query = 'way["heritage:operator"="lmi"];'
 #   features = Underpass::QL::Query.perform(bbox, query)
 #
