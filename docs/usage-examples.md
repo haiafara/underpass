@@ -23,7 +23,7 @@ wkt = <<-WKT
 WKT
 
 # Define the Overpass QL query
-op_query = 'way["heritage:operator"="lmi"]["ref:ro:lmi"="MM-II-m-B-04508"];'
+op_query = 'way["heritage:operator"="lmi"]["heritage"="2"];'
 
 # We won't use the Underpass::QL::Query convenience class
 # Note that we pass the wkt directly to the from_wkt method
@@ -261,6 +261,12 @@ Find elements within a radius of a point:
 ```ruby
 require 'underpass'
 
+# Define bounding box (using Bucharest area from Example 1)
+bbox = RGeo::Geographic.spherical_factory.parse_wkt(<<-WKT
+  POLYGON ((26.08 44.42, 26.12 44.42, 26.12 44.45, 26.08 44.45, 26.08 44.42))
+WKT
+)
+
 # Find restaurants within 500m of University Square, Bucharest
 lat = 44.4325
 lon = 26.1025
@@ -291,6 +297,12 @@ Using the Builder DSL to query multiple element types:
 ```ruby
 require 'underpass'
 
+# Define bounding box (using Bucharest area from Example 1)
+bbox = RGeo::Geographic.spherical_factory.parse_wkt(<<-WKT
+  POLYGON ((26.08 44.42, 26.12 44.42, 26.12 44.45, 26.08 44.45, 26.08 44.42))
+WKT
+)
+
 # Using Builder DSL to query multiple types
 builder = Underpass::QL::Builder.new
           .node(amenity: 'restaurant')
@@ -313,9 +325,15 @@ Query with multiple tag filters:
 ```ruby
 require 'underpass'
 
+# Define bounding box (using Bucharest area from Example 1)
+bbox = RGeo::Geographic.spherical_factory.parse_wkt(<<-WKT
+  POLYGON ((26.08 44.42, 26.12 44.42, 26.12 44.45, 26.08 44.45, 26.08 44.42))
+WKT
+)
+
 # Query with multiple tag filters
 builder = Underpass::QL::Builder.new
-          .way('heritage:operator': 'lmi', 'ref:ro:lmi': 'MM-II-m-B-04508')
+          .way('heritage:operator': 'lmi', heritage: '2')
 
 heritage = Underpass::QL::Query.perform(bbox, builder)
 
@@ -324,6 +342,11 @@ heritage.each do |building|
   puts "  Geometry: #{building.geometry.geometry_type}"  # => Polygon
   puts "  Type: #{building.type}"                        # => way
 end
+
+# Sample output:
+# Ateneul Român
+#   Geometry: Polygon
+#   Type: way
 ```
 
 ### Example 11: Filtering - Post-Query Filtering
@@ -417,6 +440,12 @@ Using the `nwr` (node/way/relation) shorthand:
 ```ruby
 require 'underpass'
 
+# Define bounding box (using Bucharest area from Example 1)
+bbox = RGeo::Geographic.spherical_factory.parse_wkt(<<-WKT
+  POLYGON ((26.08 44.42, 26.12 44.42, 26.12 44.45, 26.08 44.45, 26.08 44.42))
+WKT
+)
+
 # Using nwr (node/way/relation) shorthand
 builder = Underpass::QL::Builder.new.nwr(name: 'Universitate')
 results = Underpass::QL::Query.perform(bbox, builder)
@@ -440,6 +469,12 @@ Using an RGeo point object for around queries:
 ```ruby
 require 'underpass'
 
+# Define bounding box (using Bucharest area from Example 1)
+bbox = RGeo::Geographic.spherical_factory.parse_wkt(<<-WKT
+  POLYGON ((26.08 44.42, 26.12 44.42, 26.12 44.45, 26.08 44.45, 26.08 44.42))
+WKT
+)
+
 # Using RGeo point for around query
 point = RGeo::Geographic.spherical_factory(srid: 4326).point(26.1025, 44.4325)
 
@@ -462,6 +497,41 @@ end
 #   Type: node
 ```
 
+### Example 16: Builder DSL with Bounding Box - Cafes
+
+A complete, self-contained example showing how to use the Builder DSL to find all nodes tagged as a cafe within a specific bounding box:
+
+```ruby
+# Example 16: Builder DSL with Bounding Box - Cafes
+require 'underpass'
+
+# Step 1: Define a bounding box as a WKT polygon
+wkt = <<-WKT
+  POLYGON ((
+    26.08 44.42,
+    26.12 44.42,
+    26.12 44.45,
+    26.08 44.45,
+    26.08 44.42
+  ))
+WKT
+bbox = RGeo::Geographic.spherical_factory.parse_wkt(wkt)
+
+# Step 2: Use the Builder DSL to construct the query
+builder = Underpass::QL::Builder.new
+            .node(amenity: 'cafe')
+
+# Step 3: Pass both bounding box and builder to Query.perform
+cafes = Underpass::QL::Query.perform(bbox, builder)
+
+# Step 4: Process results
+cafes.each do |cafe|
+  puts "#{cafe.properties[:name]}"
+  puts "  Location: #{cafe.geometry.as_text}"
+  puts "  Type: #{cafe.type}"  # => "node"
+end
+```
+
 ### Summary of Return Types
 
 | Example | Geometry Type | Element Type | Description |
@@ -481,3 +551,4 @@ end
 | 13 | Point/Polygon/MultiLineString | node/way/relation | Multiple types |
 | 14 | Point/LineString/Polygon | node/way/relation | NWR shorthand |
 | 15 | Point | node | Cafes (around with RGeo) |
+| 16 | Point | node | Cafes (Builder DSL + bounding box) |

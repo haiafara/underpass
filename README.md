@@ -34,14 +34,14 @@ WKT
 bbox = RGeo::Geographic.spherical_factory.parse_wkt(wkt)
 
 # Query using raw Overpass QL
-query = 'way["heritage:operator"="lmi"]["ref:ro:lmi"="MM-II-m-B-04508"];'
+query = 'way["heritage:operator"="lmi"]["heritage"="2"];'
 features = Underpass::QL::Query.perform(bbox, query)
 
 # Each result is a Feature with geometry and OSM tags
 features.each do |f|
   puts f.geometry.as_text     # => "POLYGON ((...)"
-  puts f.properties[:name]    # => "Some Heritage Building"
-  puts f.id                   # => 123456
+  puts f.properties[:name]    # => "Biserica Romano-Catolică"
+  puts f.id                   # => 186213580
   puts f.type                 # => "way"
 end
 ```
@@ -90,9 +90,9 @@ query = Underpass::QL::Builder.new
 
 # Multiple tag filters
 query = Underpass::QL::Builder.new
-          .way('heritage:operator': 'lmi', 'ref:ro:lmi': 'MM-II-m-B-04508')
+          .way('heritage:operator': 'lmi', heritage: '2')
           .to_ql
-# => 'way["heritage:operator"="lmi"]["ref:ro:lmi"="MM-II-m-B-04508"];'
+# => 'way["heritage:operator"="lmi"]["heritage"="2"];'
 
 # nwr (node/way/relation) shorthand
 query = Underpass::QL::Builder.new
@@ -104,6 +104,27 @@ query = Underpass::QL::Builder.new
 builder = Underpass::QL::Builder.new.way(building: 'yes')
 features = Underpass::QL::Query.perform(bbox, builder)
 ```
+
+### Bounding Box Queries with Builder DSL
+
+The Builder DSL is designed to work with `Query.perform`. Define a bounding box
+as an RGeo geometry, build your query with the DSL, and pass both to `perform`:
+
+```ruby
+# Define a bounding box
+wkt = 'POLYGON ((26.08 44.42, 26.12 44.42, 26.12 44.45, 26.08 44.45, 26.08 44.42))'
+bbox = RGeo::Geographic.spherical_factory.parse_wkt(wkt)
+
+# Build the query
+builder = Underpass::QL::Builder.new.node(amenity: 'cafe')
+
+# Execute — the bounding box constrains results spatially
+cafes = Underpass::QL::Query.perform(bbox, builder)
+```
+
+Note: The Builder DSL generates the Overpass QL query body (e.g. `node["amenity"="cafe"];`),
+while the bounding box is applied as a separate spatial constraint by `Query.perform`.
+You can inspect the generated query with `builder.to_ql`.
 
 ## Proximity Queries (Around)
 
