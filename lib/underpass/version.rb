@@ -12,7 +12,7 @@ module Underpass
   # Used to generate the version string
   module VERSION
     MAJOR = 0
-    MINOR = 1
+    MINOR = 9
     PATCH = 0
 
     STRING = [MAJOR, MINOR, PATCH].join('.')
