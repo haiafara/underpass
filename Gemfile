@@ -2,6 +2,8 @@
 
 source 'https://rubygems.org'
 
+gem 'rake', '~> 13.3'
+
 group :test do
   gem 'coveralls_reborn', '~> 0.29', require: false
   gem 'rspec', '~> 3.13'
