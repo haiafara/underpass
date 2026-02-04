@@ -1,17 +1,47 @@
-name: Ruby Gem
+name: Publish
 
 on:
-  push:
-    branches:
-      - master
+  release:
+    types: [published]
 
 jobs:
   publish:
     name: Publish to RubyGems
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+      id-token: write
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Extract and validate version from tag
+        id: version
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          echo "Tag: $TAG"
+
+          # Validate tag starts with 'v'
+          if [[ ! "$TAG" =~ ^v ]]; then
+            echo "Error: Release tag must start with 'v' (e.g., v0.9.0)"
+            exit 1
+          fi
+
+          # Extract version (remove 'v' prefix)
+          VERSION="${TAG#v}"
+          echo "Extracted version: $VERSION"
+
+          # Validate semver format (basic check)
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.-]+)?(\+[a-zA-Z0-9.-]+)?$ ]]; then
+            echo "Error: Version '$VERSION' does not match semver format (e.g., 0.9.0)"
+            exit 1
+          fi
+
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -19,19 +49,82 @@ jobs:
           ruby-version: '3.4'
           bundler-cache: true
 
+      - name: Validate gemspec version matches tag
+        run: |
+          GEM_VERSION=$(ruby -e "require './lib/underpass/version'; puts Underpass::VERSION::STRING")
+          TAG_VERSION="${{ steps.version.outputs.version }}"
+
+          echo "Gem version: $GEM_VERSION"
+          echo "Release tag version: $TAG_VERSION"
+
+          if [[ "$GEM_VERSION" != "$TAG_VERSION" ]]; then
+            echo "Error: Version mismatch!"
+            echo "  gemspec: $GEM_VERSION"
+            echo "  Release tag: $TAG_VERSION"
+            echo ""
+            echo "Please update lib/underpass/version.rb to match the release tag."
+            exit 1
+          fi
+
+          echo "Version validation passed"
+
+      - name: Validate CHANGELOG.md entry exists
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+
+          echo "Checking for CHANGELOG.md entry for version $VERSION"
+
+          if grep -qE "^## \[$VERSION\]" CHANGELOG.md; then
+            echo "CHANGELOG.md entry found"
+          else
+            echo "Error: No CHANGELOG.md entry found for version $VERSION"
+            echo ""
+            echo "Expected format: ## [$VERSION] - YYYY-MM-DD"
+            echo "Please add a changelog entry following the Keep a Changelog format:"
+            echo "https://keepachangelog.com/"
+            exit 1
+          fi
+
       - name: Run rubocop
         run: bundle exec rubocop
 
       - name: Run tests
         run: bundle exec rspec
 
-      - name: Publish to RubyGems
-        run: |
-          mkdir -p $HOME/.gem
-          touch $HOME/.gem/credentials
-          chmod 0600 $HOME/.gem/credentials
-          printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
-          gem build *.gemspec
-          gem push *.gem
-        env:
-          GEM_HOST_API_KEY: ${{secrets.RUBYGEMS_AUTH_TOKEN}}
+      - uses: rubygems/release-gem@v1
+
+  docs:
+    name: Deploy Documentation
+    needs: publish
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    concurrency:
+      group: pages
+      cancel-in-progress: true
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+
+      - name: Generate YARD documentation
+        run: bundle exec yard doc
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: doc
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

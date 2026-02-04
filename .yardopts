@@ -1,0 +1,7 @@
+--readme README.md
+--markup markdown
+--output-dir doc
+--title "Underpass Documentation"
+- usage-examples.md
+- CHANGELOG.md
+lib/**/*.rb

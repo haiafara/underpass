@@ -24,14 +24,15 @@ describe Underpass::QL::Query do
           )
       end
 
-      it 'returns the correct results' do
+      it 'returns Feature objects with correct geometry', :aggregate_failures do
         op_query = 'way["something"];'
         results = subject.perform(bbox, op_query)
         expect(results.size).to eq(1)
-        expect(results.first.class).to eq(
+        expect(results.first).to be_a(Underpass::Feature)
+        expect(results.first.geometry.class).to eq(
           RGeo::Geographic::SphericalPolygonImpl
         )
-        expect(results.first.as_text).to eq(
+        expect(results.first.geometry.as_text).to eq(
           'POLYGON ((1.0 -1.0, 1.0 1.0, -1.0 1.0, -1.0 -1.0, 1.0 -1.0))'
         )
       end
@@ -46,14 +47,15 @@ describe Underpass::QL::Query do
           )
       end
 
-      it 'returns the correct results' do
+      it 'returns Feature objects with correct geometry', :aggregate_failures do
         op_query = 'way["something"];'
         results = subject.perform(bbox, op_query)
         expect(results.size).to eq(1)
-        expect(results.first.class).to eq(
+        expect(results.first).to be_a(Underpass::Feature)
+        expect(results.first.geometry.class).to eq(
           RGeo::Geographic::SphericalLineStringImpl
         )
-        expect(results.first.as_text).to eq(
+        expect(results.first.geometry.as_text).to eq(
           'LINESTRING (1.0 -1.0, 1.0 1.0, -1.0 1.0, -1.0 -1.0)'
         )
       end
@@ -68,14 +70,15 @@ describe Underpass::QL::Query do
           )
       end
 
-      it 'returns the correct results' do
+      it 'returns Feature objects with correct geometry', :aggregate_failures do
         op_query = 'node["something"];'
         results = subject.perform(bbox, op_query)
         expect(results.size).to eq(1)
-        expect(results.first.class).to eq(
+        expect(results.first).to be_a(Underpass::Feature)
+        expect(results.first.geometry.class).to eq(
           RGeo::Geographic::SphericalPointImpl
         )
-        expect(results.first.as_text).to eq(
+        expect(results.first.geometry.as_text).to eq(
           'POINT (1.0 -1.0)'
         )
       end

@@ -2,16 +2,27 @@
 
 module Underpass
   module QL
-    # Analyzes a query string to determine which match types (node, way, relation)
-    # are requested by the user
+    # Analyzes an Overpass QL query string to determine which element types
+    # (node, way, relation) are requested.
+    #
+    # Used internally by {Query} to pass type hints to {Matcher}.
     class QueryAnalyzer
+      # @return [Array<String>] the recognized OSM element types
       MATCH_TYPES = %w[node way relation].freeze
 
+      # Creates a new analyzer for the given query string.
+      #
+      # @param query [String, nil] an Overpass QL query string
       def initialize(query)
         @query = query
       end
 
-      # Returns an array of requested match types based on the query
+      # Returns the element types requested in the query.
+      #
+      # Falls back to all types when the query is empty or contains
+      # no recognized type keywords.
+      #
+      # @return [Array<String>] requested types (e.g. +["node", "way"]+)
       def requested_types
         return MATCH_TYPES if empty_query?
 

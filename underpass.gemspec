@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
   s.metadata = {
     'source_code_uri' => s.homepage,
     'bug_tracker_uri' => "#{s.homepage}/issues",
+    'documentation_uri' => 'https://haiafara.github.io/underpass',
     'rubygems_mfa_required' => 'true'
   }
 
@@ -30,4 +31,5 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 3.4.0'
 
   s.add_dependency 'rgeo', '~> 3.1'
+  s.add_dependency 'rgeo-geojson', '~> 2.2'
 end
