@@ -5,30 +5,31 @@ require 'support/nodes_and_ways'
 require 'underpass'
 
 describe Underpass::Shape do
-  subject { described_class }
-
   let(:nodes) { NodesAndWays::NODES }
 
-  describe '#open_way?' do
+  describe '.open_way?' do
     subject { described_class.open_way?(way) }
 
     context 'way is a polygon' do
       let(:way) { NodesAndWays::POLYGON_WAY }
+
       it 'returns true' do
-        expect(subject).to eq(true)
+        expect(subject).to be(true)
       end
     end
 
     context 'way is a line string' do
       let(:way) { NodesAndWays::LINE_STRING_WAY }
+
       it 'returns true' do
-        expect(subject).to eq(false)
+        expect(subject).to be(false)
       end
     end
   end
 
   describe '#polygon_from_way' do
     let(:way) { NodesAndWays::POLYGON_WAY }
+
     it 'converts a way and its nodes to a polygon' do
       polygon = described_class.polygon_from_way(way, nodes)
       expect(polygon.class).to eq(
@@ -42,6 +43,7 @@ describe Underpass::Shape do
 
   describe '#line_string_from_way' do
     let(:way) { NodesAndWays::LINE_STRING_WAY }
+
     it 'converts a way and its nodes to a linestring' do
       line_string = described_class.line_string_from_way(way, nodes)
       expect(line_string.class).to eq(
@@ -55,6 +57,7 @@ describe Underpass::Shape do
 
   describe '#point_from_node' do
     let(:node) { NodesAndWays::NODE }
+
     it 'converts a node to a point' do
       point = described_class.point_from_node(node)
       expect(point.class).to eq(

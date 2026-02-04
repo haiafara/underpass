@@ -1,10 +1,10 @@
 # underpass
 
 [![Gem Version](https://badge.fury.io/rb/underpass.svg)](https://badge.fury.io/rb/underpass)
-[![Build Status](https://www.travis-ci.org/haiafara/underpass.svg?branch=master)](https://www.travis-ci.org/haiafara/underpass)
+[![Build Status](https://github.com/haiafara/underpass/workflows/Ruby%20Gem/badge.svg)](https://github.com/haiafara/underpass/actions?query=workflow%3A%22Ruby+Gem%22)
 [![Coverage Status](https://coveralls.io/repos/github/haiafara/underpass/badge.svg?branch=master)](https://coveralls.io/github/haiafara/underpass?branch=master)
 
-A library that makes it easy to query the [Overpass API](https://wiki.openstreetmap.org/wiki/Overpass_API) and translate its responses into [RGeo](https://github.com/rgeo/rgeo) objects.
+A library that makes it easy to query the [Overpass API](https://wiki.openstreetmap.org/wiki/Overpass_API) and translate its responses into [RGeo](https://github.com/rgeo/rgeo) objects. It supports queries written in the [Overpass QL](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL).
 
 ## Installation
 
@@ -31,15 +31,49 @@ wkt = <<-WKT
     23.669 47.65
   ))
 WKT
-# Create a bounding box in which the query will run
+# Create the bounding box in which the query will run
 bbox = RGeo::Geographic.spherical_factory.parse_wkt(wkt)
-# Define the query
+# Define the Overpass QL query
 query = 'way["heritage:operator"="lmi"]["ref:ro:lmi"="MM-II-m-B-04508"];'
 # Perform the query and get your matches
 matches = Underpass::QL::Query.perform(bbox, query)
 ```
 
 See [more usage examples](usage-examples.md).
+
+## Query Analyzer
+
+The library includes a query analyzer that automatically determines which types of matches (node, way, or relation) you're interested in based on your query. This ensures that only the requested match types are returned.
+
+### How it works
+
+1. The query is trimmed and split on semicolons (`;`)
+2. For each line, the analyzer looks at the first word
+3. If the first word is `node`, `way`, or `relation`, that type is added to the requested match types
+4. The library returns only matches of the requested types that have the `tags` key
+
+### Examples
+
+Query for ways only:
+```ruby
+query = 'way["highway"="primary"];'
+matches = Underpass::QL::Query.perform(bbox, query)
+# Returns only way matches
+```
+
+Query for nodes and relations:
+```ruby
+query = 'node["amenity"="restaurant"]; relation["type"="multipolygon"];'
+matches = Underpass::QL::Query.perform(bbox, query)
+# Returns node and relation matches, but no way matches
+```
+
+Query with unrecognized type (returns all types):
+```ruby
+query = 'nwr["name"="Example"];'  # nwr is not a specific type
+matches = Underpass::QL::Query.perform(bbox, query)
+# Returns all match types (node, way, and relation)
+```
 
 ## To Do
 

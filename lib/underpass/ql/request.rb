@@ -16,7 +16,7 @@ module Underpass
 
       def initialize(query, bbox)
         @overpass_query = query
-        @global_bbox ||= "[#{bbox}]"
+        @global_bbox = "[#{bbox}]"
       end
 
       # Converts the object to a query string
