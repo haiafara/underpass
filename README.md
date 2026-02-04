@@ -437,7 +437,6 @@ All examples use real data from OpenStreetMap and have been tested to work corre
 Further tips:
 
 * To test drive the library run `bundle console`
-* Run `guard` in the project directory, it'll watch for file changes and run Rubocop and RSpec for real time feedback
 
 ## License
 

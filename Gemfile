@@ -4,9 +4,6 @@ source 'https://rubygems.org'
 
 group :test do
   gem 'coveralls_reborn', '~> 0.29', require: false
-  gem 'guard', '~> 2.20'
-  gem 'guard-rspec', '~> 4.7'
-  gem 'guard-rubocop', '~> 1.5'
   gem 'rspec', '~> 3.13'
   gem 'rubocop', '~> 1.84', require: false
   gem 'rubocop-performance', '~> 1.26', require: false
