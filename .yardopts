@@ -2,6 +2,6 @@
 --markup markdown
 --output-dir doc
 --title "Underpass Documentation"
-- usage-examples.md
+- docs/usage-examples.md
 - CHANGELOG.md
 lib/**/*.rb

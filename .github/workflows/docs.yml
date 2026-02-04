@@ -33,6 +33,11 @@ jobs:
       - name: Generate YARD documentation
         run: bundle exec yard doc
 
+      - name: Fix navigation links for subdirectory deployment
+        run: |
+          sed -i 's|fetch(e\.data\.url)|fetch((typeof relpath !== "undefined" ? relpath : "") + e.data.url)|' doc/js/app.js
+          sed -i 's|history\.pushState({}, document\.title, e\.data\.url)|history.pushState({}, document.title, (typeof relpath !== "undefined" ? relpath : "") + e.data.url)|' doc/js/app.js
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: doc

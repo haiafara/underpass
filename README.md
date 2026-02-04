@@ -46,9 +46,9 @@ features.each do |f|
 end
 ```
 
-See [more usage examples](usage-examples.md).
+See [more usage examples](docs/usage-examples.md).
 
-For comprehensive examples with real data covering all return types and functionality, see the [usage-examples.md](usage-examples.md) file which includes examples for:
+For comprehensive examples with real data covering all return types and functionality, see the [usage-examples.md](docs/usage-examples.md) file which includes examples for:
 - Node queries (Point geometries) - restaurants, cafes, etc.
 - Way queries (LineString/Polygon geometries) - roads, buildings, parks
 - Relation queries (MultiPolygon/MultiLineString geometries) - lakes, bus routes
@@ -409,7 +409,7 @@ Have a look at the [issue tracker](https://github.com/haiafara/underpass/issues)
 
 ## Comprehensive Examples
 
-For detailed, working examples with real data that cover all return types and functionality of the library, see the [usage-examples.md](usage-examples.md) file. These examples demonstrate:
+For detailed, working examples with real data that cover all return types and functionality of the library, see the [usage-examples.md](docs/usage-examples.md) file. These examples demonstrate:
 
 - **Node queries** (Point geometries) - restaurants, cafes, bus stops
 - **Way queries** (LineString geometries) - primary roads, highways
