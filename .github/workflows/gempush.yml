@@ -96,35 +96,8 @@ jobs:
   docs:
     name: Deploy Documentation
     needs: publish
-    runs-on: ubuntu-latest
-
     permissions:
       contents: read
       pages: write
       id-token: write
-
-    concurrency:
-      group: pages
-      cancel-in-progress: true
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.4'
-          bundler-cache: true
-
-      - name: Generate YARD documentation
-        run: bundle exec yard doc
-
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: doc
-
-      - id: deployment
-        uses: actions/deploy-pages@v4
+    uses: ./.github/workflows/docs.yml
