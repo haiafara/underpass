@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Configurable `max_retries` for retry attempts on rate limiting and timeout errors
 - Structured error data: errors now include `code`, `error_message`, `details`, and `http_status` attributes
 - New `ErrorParser` class to parse HTML error responses from Overpass API
 - `to_h` and `to_json` methods on error classes for easy serialization

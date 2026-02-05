@@ -355,6 +355,16 @@ Underpass.configure do |c|
 end
 ```
 
+### Custom Max Retries
+
+Change the maximum number of retry attempts for rate limiting and timeout errors (default: 3):
+
+```ruby
+Underpass.configure do |c|
+  c.max_retries = 5
+end
+```
+
 ### Reset Configuration
 
 ```ruby
@@ -365,8 +375,8 @@ Underpass.reset_configuration!
 
 The client automatically retries on transient errors with exponential backoff:
 
-- **HTTP 429** (rate limited) -- retries up to 3 times, then raises `Underpass::RateLimitError`
-- **HTTP 504** (gateway timeout) -- retries up to 3 times, then raises `Underpass::TimeoutError`
+- **HTTP 429** (rate limited) -- retries up to `max_retries` times (default: 3), then raises `Underpass::RateLimitError`
+- **HTTP 504** (gateway timeout) -- retries up to `max_retries` times (default: 3), then raises `Underpass::TimeoutError`
 - **Other errors** -- raises `Underpass::ApiError` immediately
 
 All errors inherit from `Underpass::Error`, which inherits from `StandardError`.
