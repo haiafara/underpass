@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
 
   s.require_paths = ['lib']
   s.files = Dir['lib/**/*.rb', 'LICENSE', 'README.md'].to_a
-  s.required_ruby_version = '>= 3.4.0'
+  s.required_ruby_version = '>= 3.2.0'
 
   s.add_dependency 'rgeo', '~> 3.1'
   s.add_dependency 'rgeo-geojson', '~> 2.2'
