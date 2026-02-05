@@ -53,6 +53,7 @@ For comprehensive examples with real data covering all return types and function
 - Way queries (LineString/Polygon geometries) - roads, buildings, parks
 - Relation queries (MultiPolygon/MultiLineString geometries) - lakes, bus routes
 - Area queries using `perform_in_area`
+- Raw queries using `perform_raw` with inline bounding boxes
 - Around queries for proximity search
 - Builder DSL for constructing queries
 - Post-query filtering
@@ -178,6 +179,21 @@ Builder objects work with `perform_in_area` as well:
 builder = Underpass::QL::Builder.new.node(amenity: 'restaurant')
 features = Underpass::QL::Query.perform_in_area('Romania', builder)
 ```
+
+## Raw Queries (Inline Bounding Box)
+
+When your query already contains its own bounding box (or other spatial filters)
+inline, use `perform_raw` to skip the global bounding box:
+
+```ruby
+query = 'node["name"="Peak"]["natural"="peak"](47.0,25.0,47.1,25.1);'
+features = Underpass::QL::Query.perform_raw(query)
+```
+
+The query body is wrapped in the standard Overpass request template (output format,
+timeout, recurse) but no global bounding box is added. This is useful when you
+construct queries with element-level bounding boxes or other spatial constraints
+that don't fit the `perform` / `perform_in_area` patterns.
 
 ## Relation Support
 

@@ -13,6 +13,10 @@ module Underpass
     #
     # @example Query with a named area
     #   features = Underpass::QL::Query.perform_in_area('Romania', 'node["place"="city"];')
+    #
+    # @example Raw query with inline bounding box
+    #   query = 'node["name"="Peak"]["natural"="peak"](47.0,25.0,47.1,25.1);'
+    #   features = Underpass::QL::Query.perform_raw(query)
     class Query
       # Queries the Overpass API within a bounding box.
       #
@@ -41,6 +45,21 @@ module Underpass
         query_string = resolve_query(query)
         request      = Underpass::QL::Request.new(query_string, nil, area_name: area_name)
         execute(request, query_string)
+      end
+
+      # Executes a pre-built query body that includes its own inline bbox.
+      # Wraps it in the standard Request template for output format and timeout,
+      # without adding a global bounding box.
+      #
+      # @param query_body [String] Overpass QL body with inline bbox
+      #   (e.g. +'node["name"="Peak"]["natural"="peak"](47.0,25.0,47.1,25.1);'+)
+      # @return [Array<Feature>] the matched features
+      # @raise [RateLimitError] when rate limited after exhausting retries
+      # @raise [TimeoutError] when the API times out after exhausting retries
+      # @raise [ApiError] when the API returns an unexpected error
+      def self.perform_raw(query_body)
+        request = Underpass::QL::Request.new(query_body, nil)
+        execute(request, query_body)
       end
 
       def self.resolve_query(query)
