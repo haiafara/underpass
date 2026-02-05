@@ -21,7 +21,7 @@ module Underpass
     # @raise [TimeoutError] when the API times out after exhausting retries
     # @raise [ApiError] when the API returns an unexpected error
     def self.perform(request, max_retries: nil)
-      max_retries = max_retries.nil? ? Underpass.configuration.max_retries : max_retries
+      max_retries = Underpass.configuration.max_retries if max_retries.nil?
       cache_key = Digest::SHA256.hexdigest(request.to_query)
       cached = Underpass.cache&.fetch(cache_key)
       return cached if cached

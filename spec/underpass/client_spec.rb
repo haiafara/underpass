@@ -43,7 +43,7 @@ describe Underpass::Client do
         Underpass.configure { |c| c.max_retries = 1 }
 
         stub = stub_request(:post, default_endpoint)
-          .to_return(status: 429, body: 'Rate limited')
+               .to_return(status: 429, body: 'Rate limited')
 
         allow(subject).to receive(:sleep)
 
@@ -57,7 +57,7 @@ describe Underpass::Client do
         Underpass.configure { |c| c.max_retries = 10 }
 
         stub = stub_request(:post, default_endpoint)
-          .to_return(status: 429, body: 'Rate limited')
+               .to_return(status: 429, body: 'Rate limited')
 
         allow(subject).to receive(:sleep)
 
