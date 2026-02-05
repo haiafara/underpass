@@ -371,17 +371,39 @@ The client automatically retries on transient errors with exponential backoff:
 
 All errors inherit from `Underpass::Error`, which inherits from `StandardError`.
 
+### Structured Error Data
+
+Errors include structured data parsed from Overpass API responses:
+
 ```ruby
 begin
   features = Underpass::QL::Query.perform(bbox, query)
+rescue Underpass::TimeoutError => e
+  e.code           # => "timeout"
+  e.error_message  # => "Query timed out in \"query\" at line 3 after 25 seconds."
+  e.details        # => { line: 3, timeout_seconds: 25 }
+  e.http_status    # => 504
+
+  # Convert to hash or JSON for logging/APIs
+  e.to_h           # => { code: "timeout", message: "...", details: {...} }
+  e.to_json        # => JSON string
 rescue Underpass::RateLimitError
   puts "Rate limited by the Overpass API, try again later"
-rescue Underpass::TimeoutError
-  puts "Query timed out, try a smaller bounding box"
 rescue Underpass::ApiError => e
-  puts "API error: #{e.message}"
+  puts "API error (#{e.code}): #{e.error_message}"
 end
 ```
+
+### Error Codes
+
+| Code | Description | HTTP Status |
+|------|-------------|-------------|
+| `timeout` | Query exceeded time limit | 504 |
+| `memory` | Query exceeded memory limit | 504 |
+| `rate_limit` | Too many requests | 429 |
+| `syntax` | Query syntax error | 400 |
+| `runtime` | Other runtime errors | varies |
+| `unknown` | Unparseable error | varies |
 
 ## Response Caching
 
