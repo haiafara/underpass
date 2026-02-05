@@ -18,6 +18,13 @@ describe Underpass::Configuration do
     end
   end
 
+  describe '#max_retries' do
+    it 'defaults to 3' do
+      config = described_class.new
+      expect(config.max_retries).to eq(3)
+    end
+  end
+
   describe 'Underpass.configure' do
     after { Underpass.reset_configuration! }
 
@@ -36,6 +43,14 @@ describe Underpass::Configuration do
       end
 
       expect(Underpass.configuration.timeout).to eq(60)
+    end
+
+    it 'allows setting custom max_retries' do
+      Underpass.configure do |c|
+        c.max_retries = 5
+      end
+
+      expect(Underpass.configuration.max_retries).to eq(5)
     end
   end
 
