@@ -46,7 +46,23 @@ describe Underpass::Client do
         allow(subject).to receive(:sleep)
 
         expect { subject.perform(request_double, max_retries: 1) }
-          .to raise_error(Underpass::RateLimitError, /after 1 retries/)
+          .to raise_error(Underpass::RateLimitError)
+      end
+
+      it 'includes structured error data in RateLimitError', :aggregate_failures do
+        stub_request(:post, default_endpoint)
+          .to_return(status: 429, body: 'Rate limited')
+
+        allow(subject).to receive(:sleep)
+
+        begin
+          subject.perform(request_double, max_retries: 1)
+        rescue Underpass::RateLimitError => e
+          expect(e.code).to eq('rate_limit')
+          expect(e.http_status).to eq(429)
+          expect(e.details).to eq({})
+          expect(e.to_h).to include(code: 'rate_limit')
+        end
       end
 
       it 'succeeds after a retry' do
@@ -69,7 +85,25 @@ describe Underpass::Client do
         allow(subject).to receive(:sleep)
 
         expect { subject.perform(request_double, max_retries: 1) }
-          .to raise_error(Underpass::TimeoutError, /after 1 retries/)
+          .to raise_error(Underpass::TimeoutError)
+      end
+
+      it 'includes structured error data in TimeoutError', :aggregate_failures do
+        timeout_html = '<strong>runtime error: Query timed out in "query" at line 3 after 25 seconds.</strong>'
+        stub_request(:post, default_endpoint)
+          .to_return(status: 504, body: timeout_html)
+
+        allow(subject).to receive(:sleep)
+
+        begin
+          subject.perform(request_double, max_retries: 1)
+        rescue Underpass::TimeoutError => e
+          expect(e.code).to eq('timeout')
+          expect(e.http_status).to eq(504)
+          expect(e.details).to eq({ line: 3, timeout_seconds: 25 })
+          expect(e.error_message).to include('Query timed out')
+          expect(e.to_h[:code]).to eq('timeout')
+        end
       end
     end
 
@@ -79,7 +113,35 @@ describe Underpass::Client do
           .to_return(status: 500, body: 'Internal Server Error')
 
         expect { subject.perform(request_double) }
-          .to raise_error(Underpass::ApiError, /Overpass API returned 500/)
+          .to raise_error(Underpass::ApiError)
+      end
+
+      it 'includes structured error data in ApiError', :aggregate_failures do
+        error_html = '<strong>parse error: Unknown type "nod" on line 2</strong>'
+        stub_request(:post, default_endpoint)
+          .to_return(status: 400, body: error_html)
+
+        begin
+          subject.perform(request_double)
+        rescue Underpass::ApiError => e
+          expect(e.code).to eq('syntax')
+          expect(e.http_status).to eq(400)
+          expect(e.details).to eq({ line: 2 })
+          expect(e.error_message).to include('Unknown type "nod"')
+        end
+      end
+
+      it 'supports to_json for error serialization' do
+        stub_request(:post, default_endpoint)
+          .to_return(status: 500, body: '<strong>runtime error: Query failed</strong>')
+
+        begin
+          subject.perform(request_double)
+        rescue Underpass::ApiError => e
+          json = JSON.parse(e.to_json)
+          expect(json['code']).to eq('runtime')
+          expect(json['message']).to eq('Query failed')
+        end
       end
     end
   end

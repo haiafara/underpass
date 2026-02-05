@@ -54,14 +54,28 @@ module Underpass
     private_class_method :post_request
 
     def self.handle_error(response, retries, max_retries)
-      error_class = { 429 => RateLimitError, 504 => TimeoutError }[response.code.to_i]
-      raise ApiError, "Overpass API returned #{response.code}: #{response.body}" unless error_class
+      status_code = response.code.to_i
+      error_class = { 429 => RateLimitError, 504 => TimeoutError }[status_code] || ApiError
+
+      raise build_error(error_class, response.body, status_code) if error_class == ApiError
 
       retries += 1
-      raise error_class, "#{error_class} after #{max_retries} retries" if retries > max_retries
+      raise build_error(error_class, response.body, status_code) if retries > max_retries
 
       retries
     end
     private_class_method :handle_error
+
+    def self.build_error(error_class, body, status_code)
+      parsed = ErrorParser.parse(body, status_code)
+      error_class.new(
+        parsed[:message],
+        code: parsed[:code],
+        error_message: parsed[:message],
+        details: parsed[:details],
+        http_status: status_code
+      )
+    end
+    private_class_method :build_error
   end
 end
