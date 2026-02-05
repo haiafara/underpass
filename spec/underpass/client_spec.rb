@@ -49,7 +49,7 @@ describe Underpass::Client do
 
         expect { subject.perform(request_double) }
           .to raise_error(Underpass::RateLimitError)
-        
+
         expect(stub).to have_been_requested.times(2) # 1 initial + 1 retry
       end
 
@@ -63,7 +63,7 @@ describe Underpass::Client do
 
         expect { subject.perform(request_double, max_retries: 1) }
           .to raise_error(Underpass::RateLimitError)
-        
+
         expect(stub).to have_been_requested.times(2) # 1 initial + 1 retry
       end
     end
