@@ -49,7 +49,7 @@ describe Underpass::Client do
           .to raise_error(Underpass::RateLimitError)
       end
 
-      it 'includes structured error data in RateLimitError' do
+      it 'includes structured error data in RateLimitError', :aggregate_failures do
         stub_request(:post, default_endpoint)
           .to_return(status: 429, body: 'Rate limited')
 
@@ -88,7 +88,7 @@ describe Underpass::Client do
           .to raise_error(Underpass::TimeoutError)
       end
 
-      it 'includes structured error data in TimeoutError' do
+      it 'includes structured error data in TimeoutError', :aggregate_failures do
         timeout_html = '<strong>runtime error: Query timed out in "query" at line 3 after 25 seconds.</strong>'
         stub_request(:post, default_endpoint)
           .to_return(status: 504, body: timeout_html)
@@ -116,7 +116,7 @@ describe Underpass::Client do
           .to raise_error(Underpass::ApiError)
       end
 
-      it 'includes structured error data in ApiError' do
+      it 'includes structured error data in ApiError', :aggregate_failures do
         error_html = '<strong>parse error: Unknown type "nod" on line 2</strong>'
         stub_request(:post, default_endpoint)
           .to_return(status: 400, body: error_html)

@@ -41,12 +41,12 @@ module Underpass
       return '' if body.nil? || body.empty?
 
       # Try to extract text from <strong> tags (common Overpass error format)
-      if (match = body.match(/<strong[^>]*>(.*?)<\/strong>/im))
+      if (match = body.match(%r{<strong[^>]*>(.*?)</strong>}im))
         return match[1].gsub(/<[^>]+>/, '').strip
       end
 
       # Try to extract from <p> tags
-      if (match = body.match(/<p[^>]*>(.*?)<\/p>/im))
+      if (match = body.match(%r{<p[^>]*>(.*?)</p>}im))
         return match[1].gsub(/<[^>]+>/, '').strip
       end
 
@@ -61,46 +61,41 @@ module Underpass
     # @param status_code [Integer] the HTTP status code
     # @return [Hash] structured error data
     def self.parse_error_text(text, status_code)
-      # Check for timeout errors
-      if (match = text.match(PATTERNS[:timeout]))
-        return {
-          code: 'timeout',
-          message: text,
-          details: { line: match[1].to_i, timeout_seconds: match[2].to_i }
-        }
-      end
-
-      # Check for memory errors
-      if (match = text.match(PATTERNS[:memory]))
-        return {
-          code: 'memory',
-          message: text,
-          details: { memory_mb: match[1].to_i }
-        }
-      end
-
-      # Check for syntax/parse errors
-      if (match = text.match(PATTERNS[:syntax]))
-        return {
-          code: 'syntax',
-          message: match[1].strip,
-          details: extract_syntax_details(match[1])
-        }
-      end
-
-      # Check for other runtime errors
-      if (match = text.match(PATTERNS[:runtime]))
-        return {
-          code: 'runtime',
-          message: match[1].strip,
-          details: {}
-        }
-      end
-
-      # Fallback for unknown errors
-      unknown_result(text, status_code)
+      parse_timeout(text) ||
+        parse_memory(text) ||
+        parse_syntax(text) ||
+        parse_runtime(text) ||
+        unknown_result(text, status_code)
     end
     private_class_method :parse_error_text
+
+    def self.parse_timeout(text)
+      return unless (match = text.match(PATTERNS[:timeout]))
+
+      { code: 'timeout', message: text, details: { line: match[1].to_i, timeout_seconds: match[2].to_i } }
+    end
+    private_class_method :parse_timeout
+
+    def self.parse_memory(text)
+      return unless (match = text.match(PATTERNS[:memory]))
+
+      { code: 'memory', message: text, details: { memory_mb: match[1].to_i } }
+    end
+    private_class_method :parse_memory
+
+    def self.parse_syntax(text)
+      return unless (match = text.match(PATTERNS[:syntax]))
+
+      { code: 'syntax', message: match[1].strip, details: extract_syntax_details(match[1]) }
+    end
+    private_class_method :parse_syntax
+
+    def self.parse_runtime(text)
+      return unless (match = text.match(PATTERNS[:runtime]))
+
+      { code: 'runtime', message: match[1].strip, details: {} }
+    end
+    private_class_method :parse_runtime
 
     # Extracts line number from syntax error messages if present.
     #

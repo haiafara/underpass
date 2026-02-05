@@ -60,8 +60,8 @@ module Underpass
     #
     # @param args [Array] arguments passed to JSON.generate
     # @return [String] the error as a JSON string
-    def to_json(*args)
-      to_h.to_json(*args)
+    def to_json(*)
+      to_h.to_json(*)
     end
   end
 

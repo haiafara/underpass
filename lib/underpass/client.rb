@@ -56,31 +56,26 @@ module Underpass
     def self.handle_error(response, retries, max_retries)
       status_code = response.code.to_i
       error_class = { 429 => RateLimitError, 504 => TimeoutError }[status_code] || ApiError
-      parsed = ErrorParser.parse(response.body, status_code)
 
-      if error_class == ApiError
-        raise ApiError.new(
-          parsed[:message],
-          code: parsed[:code],
-          error_message: parsed[:message],
-          details: parsed[:details],
-          http_status: status_code
-        )
-      end
+      raise build_error(error_class, response.body, status_code) if error_class == ApiError
 
       retries += 1
-      if retries > max_retries
-        raise error_class.new(
-          parsed[:message],
-          code: parsed[:code],
-          error_message: parsed[:message],
-          details: parsed[:details],
-          http_status: status_code
-        )
-      end
+      raise build_error(error_class, response.body, status_code) if retries > max_retries
 
       retries
     end
     private_class_method :handle_error
+
+    def self.build_error(error_class, body, status_code)
+      parsed = ErrorParser.parse(body, status_code)
+      error_class.new(
+        parsed[:message],
+        code: parsed[:code],
+        error_message: parsed[:message],
+        details: parsed[:details],
+        http_status: status_code
+      )
+    end
+    private_class_method :build_error
   end
 end
