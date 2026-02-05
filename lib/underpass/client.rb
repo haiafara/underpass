@@ -10,20 +10,18 @@ module Underpass
   # Handles caching of responses and automatic retries with exponential
   # backoff for rate limiting (429) and timeout (504) responses.
   class Client
-    # @return [Integer] default maximum number of retries
-    MAX_RETRIES = 3
-
     # Performs the API request with automatic retries for rate limiting and timeouts.
     #
     # Results are cached when a {Cache} instance is configured via {Underpass.cache}.
     #
     # @param request [QL::Request] the prepared Overpass query request
-    # @param max_retries [Integer] maximum number of retry attempts
+    # @param max_retries [Integer] maximum number of retry attempts (defaults to configured value)
     # @return [Net::HTTPResponse] the API response
     # @raise [RateLimitError] when rate limited after exhausting retries
     # @raise [TimeoutError] when the API times out after exhausting retries
     # @raise [ApiError] when the API returns an unexpected error
-    def self.perform(request, max_retries: MAX_RETRIES)
+    def self.perform(request, max_retries: nil)
+      max_retries = Underpass.configuration.max_retries if max_retries.nil?
       cache_key = Digest::SHA256.hexdigest(request.to_query)
       cached = Underpass.cache&.fetch(cache_key)
       return cached if cached

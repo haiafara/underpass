@@ -7,6 +7,7 @@ coverage
 
 # bundler stuff
 .bundle
+vendor/bundle
 
 # any built gems
 *.gem

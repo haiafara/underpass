@@ -38,6 +38,36 @@ describe Underpass::Client do
       expect(stub).to have_been_requested
     end
 
+    context 'when using configured max_retries' do
+      it 'uses the configured max_retries value' do
+        Underpass.configure { |c| c.max_retries = 1 }
+
+        stub = stub_request(:post, default_endpoint)
+               .to_return(status: 429, body: 'Rate limited')
+
+        allow(subject).to receive(:sleep)
+
+        expect { subject.perform(request_double) }
+          .to raise_error(Underpass::RateLimitError)
+
+        expect(stub).to have_been_requested.times(2) # 1 initial + 1 retry
+      end
+
+      it 'allows overriding configured max_retries per call' do
+        Underpass.configure { |c| c.max_retries = 10 }
+
+        stub = stub_request(:post, default_endpoint)
+               .to_return(status: 429, body: 'Rate limited')
+
+        allow(subject).to receive(:sleep)
+
+        expect { subject.perform(request_double, max_retries: 1) }
+          .to raise_error(Underpass::RateLimitError)
+
+        expect(stub).to have_been_requested.times(2) # 1 initial + 1 retry
+      end
+    end
+
     context 'when the API returns a 429 rate limit response' do
       it 'retries and raises RateLimitError after max retries' do
         stub_request(:post, default_endpoint)
