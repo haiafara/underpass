@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `Query.perform_raw` for executing pre-built queries with inline bounding boxes
 - Configurable `max_retries` for retry attempts on rate limiting and timeout errors
 - Structured error data: errors now include `code`, `error_message`, `details`, and `http_status` attributes
 - New `ErrorParser` class to parse HTML error responses from Overpass API
