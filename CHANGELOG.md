@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-02-07
+
 ### Added
 - `Query.perform_raw` for executing pre-built queries with inline bounding boxes
 - Configurable `max_retries` for retry attempts on rate limiting and timeout errors
