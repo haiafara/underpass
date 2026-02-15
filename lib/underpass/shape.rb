@@ -20,8 +20,11 @@ module Underpass
       #
       # @param way [Hash] a parsed way element
       # @param nodes [Hash{Integer => Hash}] node lookup table
-      # @return [RGeo::Feature::Polygon] the polygon geometry
+      # @return [RGeo::Feature::Polygon, nil] the polygon geometry, or +nil+
+      #   if the way has fewer than 4 points
       def polygon_from_way(way, nodes)
+        return nil if way[:nodes].size < 4
+
         factory.polygon(line_string_from_way(way, nodes))
       end
 
@@ -103,7 +106,11 @@ module Underpass
         return [] if way_ids.empty?
 
         sequences = WayChain.new(way_ids, ways).merged_sequences
-        sequences.map { |ids| factory.linear_ring(points_from_node_ids(ids, nodes)) }
+        sequences.filter_map do |ids|
+          next if ids.size < 4
+
+          factory.linear_ring(points_from_node_ids(ids, nodes))
+        end
       end
 
       def matching_inner_rings(outer_ring, inner_rings)

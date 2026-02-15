@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Skip degenerate rings with fewer than 4 points in `Shape#polygon_from_way` and `Shape#build_rings` to prevent RGeo `LinearRing` crashes from incomplete ways
+
 ## [0.9.1] - 2026-02-07
 
 ### Added
