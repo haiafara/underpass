@@ -40,6 +40,22 @@ describe Underpass::Shape do
         'POLYGON ((1.0 -1.0, 1.0 1.0, -1.0 1.0, 1.0 -1.0))'
       )
     end
+
+    context 'when way has fewer than 4 nodes' do
+      let(:degenerate_way) { { type: 'way', nodes: [1, 2, 1] } }
+
+      it 'returns nil' do
+        expect(described_class.polygon_from_way(degenerate_way, nodes)).to be_nil
+      end
+    end
+
+    context 'when way has only 2 nodes' do
+      let(:degenerate_way) { { type: 'way', nodes: [1, 1] } }
+
+      it 'returns nil' do
+        expect(described_class.polygon_from_way(degenerate_way, nodes)).to be_nil
+      end
+    end
   end
 
   describe '#line_string_from_way' do
@@ -82,6 +98,29 @@ describe Underpass::Shape do
         expect(result).to be_a(RGeo::Geographic::SphericalPolygonImpl)
         expect(result.exterior_ring.num_points).to eq(5)
         expect(result.interior_rings.size).to eq(1)
+      end
+    end
+
+    context 'when outer ring has fewer than 4 points' do
+      let(:relation) { Relations::DEGENERATE_OUTER_RELATION }
+
+      it 'skips the degenerate ring and returns an empty multi polygon' do
+        nodes = Relations::EXTENDED_NODES.merge(Relations::DEGENERATE_WAY_NODES)
+        result = described_class.multipolygon_from_relation(relation, Relations::DEGENERATE_WAYS, nodes)
+        expect(result).to be_a(RGeo::Geographic::SphericalMultiPolygonImpl)
+        expect(result.num_geometries).to eq(0)
+      end
+    end
+
+    context 'when inner ring has fewer than 4 points' do
+      let(:relation) { Relations::DEGENERATE_INNER_RELATION }
+
+      it 'skips the degenerate inner ring and returns the polygon without holes' do
+        nodes = Relations::EXTENDED_NODES.merge(Relations::DEGENERATE_WAY_NODES)
+        ways = Relations::DEGENERATE_WAYS.merge(Relations::EXTENDED_WAYS)
+        result = described_class.multipolygon_from_relation(relation, ways, nodes)
+        expect(result).to be_a(RGeo::Geographic::SphericalPolygonImpl)
+        expect(result.interior_rings.size).to eq(0)
       end
     end
 

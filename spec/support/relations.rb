@@ -49,6 +49,41 @@ module Relations
       ]
     }.freeze
 
+  # A degenerate way with only 3 nodes (cannot form a valid ring)
+  DEGENERATE_WAY_NODES =
+    {
+      40 => { type: 'node', lat: 0, lon: 0 },
+      41 => { type: 'node', lat: 5, lon: 5 },
+      42 => { type: 'node', lat: 0, lon: 0 } # closed but only 3 points
+    }.freeze
+
+  DEGENERATE_WAYS =
+    {
+      100 => { type: 'way', id: 100, nodes: [10, 11, 12, 13, 10] },
+      300 => { type: 'way', id: 300, nodes: [40, 41, 40] }
+    }.freeze
+
+  DEGENERATE_OUTER_RELATION =
+    {
+      type: 'relation',
+      id: 3000,
+      tags: { type: 'multipolygon', name: 'Degenerate Outer' },
+      members: [
+        { type: 'way', ref: 300, role: 'outer' }
+      ]
+    }.freeze
+
+  DEGENERATE_INNER_RELATION =
+    {
+      type: 'relation',
+      id: 3001,
+      tags: { type: 'multipolygon', name: 'Degenerate Inner' },
+      members: [
+        { type: 'way', ref: 100, role: 'outer' },
+        { type: 'way', ref: 300, role: 'inner' }
+      ]
+    }.freeze
+
   ROUTE_RELATION =
     {
       type: 'relation',
