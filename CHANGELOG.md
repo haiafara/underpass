@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Skip degenerate rings with fewer than 4 points in `Shape#polygon_from_way` and `Shape#build_rings` to prevent RGeo `LinearRing` crashes from incomplete ways
+- `ErrorParser` now scans `<p>` tags before `<strong>` so Overpass error bodies that use `<strong>` as an inline label (e.g. `<p><strong>Error</strong>: line 3: parse error: bbox requires four arguments</p>`) surface the real message instead of just `"Error"`. Syntax errors now also report `details[:line]` when the line number precedes `parse error:`, and extracted text is HTML-entity-decoded (so messages contain `"nod"` rather than `&quot;nod&quot;`)
 
 ## [0.9.1] - 2026-02-07
 

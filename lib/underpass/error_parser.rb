@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'cgi'
+
 module Underpass
   # Parses HTML error responses from the Overpass API into structured data.
   #
@@ -35,25 +37,52 @@ module Underpass
 
     # Extracts error text from HTML or returns the body as-is.
     #
+    # Overpass sometimes wraps the real error message in a <p> and uses
+    # <strong> only as an inline label (e.g. "<p><strong>Error</strong>:
+    # line 3: parse error: ...</p>"). Scan every <p> first and prefer one
+    # whose stripped text matches a known pattern, so label-only <strong>
+    # tags don't swallow the useful content.
+    #
     # @param body [String] the response body
     # @return [String] the extracted error text
     def self.extract_error_text(body)
       return '' if body.nil? || body.empty?
 
-      # Try to extract text from <strong> tags (common Overpass error format)
-      if (match = body.match(%r{<strong[^>]*>(.*?)</strong>}im))
-        return match[1].gsub(/<[^>]+>/, '').strip
-      end
+      paragraphs = extract_paragraphs(body)
+      from_paragraphs = pick_paragraph(paragraphs)
+      return CGI.unescapeHTML(from_paragraphs) if from_paragraphs
 
-      # Try to extract from <p> tags
-      if (match = body.match(%r{<p[^>]*>(.*?)</p>}im))
-        return match[1].gsub(/<[^>]+>/, '').strip
-      end
+      from_strong = extract_strong_text(body)
+      return CGI.unescapeHTML(from_strong) unless from_strong.empty?
 
-      # Fall back to stripping all HTML tags
-      body.gsub(/<[^>]+>/, ' ').gsub(/\s+/, ' ').strip
+      CGI.unescapeHTML(body.gsub(/<[^>]+>/, ' ').gsub(/\s+/, ' ').strip)
     end
     private_class_method :extract_error_text
+
+    def self.extract_paragraphs(body)
+      body.scan(%r{<p[^>]*>(.*?)</p>}im)
+          .map { |m| m[0].gsub(/<[^>]+>/, '').strip }
+          .reject(&:empty?)
+    end
+    private_class_method :extract_paragraphs
+
+    # Picks the first paragraph matching a known pattern, or the last
+    # paragraph as a general-context fallback.
+    def self.pick_paragraph(paragraphs)
+      return if paragraphs.empty?
+
+      matched = paragraphs.find { |p| PATTERNS.each_value.any? { |rx| p.match?(rx) } }
+      matched || paragraphs.last
+    end
+    private_class_method :pick_paragraph
+
+    def self.extract_strong_text(body)
+      match = body.match(%r{<strong[^>]*>(.*?)</strong>}im)
+      return '' unless match
+
+      match[1].gsub(/<[^>]+>/, '').strip
+    end
+    private_class_method :extract_strong_text
 
     # Parses the error text against known patterns.
     #
@@ -84,9 +113,9 @@ module Underpass
     private_class_method :parse_memory
 
     def self.parse_syntax(text)
-      return unless (match = text.match(PATTERNS[:syntax]))
+      return unless text.match(PATTERNS[:syntax])
 
-      { code: 'syntax', message: match[1].strip, details: extract_syntax_details(match[1]) }
+      { code: 'syntax', message: text.strip, details: extract_syntax_details(text) }
     end
     private_class_method :parse_syntax
 
