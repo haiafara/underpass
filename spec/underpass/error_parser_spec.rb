@@ -203,9 +203,14 @@ describe Underpass::ErrorParser do
       it 'decodes HTML entities in the message' do
         result = described_class.parse(html_body, 400)
 
-        expect(result[:code]).to eq('syntax')
         expect(result[:message]).to include('Unknown type "nod"')
         expect(result[:message]).not_to include('&quot;')
+      end
+
+      it 'still classifies the error and extracts the line number' do
+        result = described_class.parse(html_body, 400)
+
+        expect(result[:code]).to eq('syntax')
         expect(result[:details]).to eq({ line: 3 })
       end
     end
