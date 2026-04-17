@@ -167,5 +167,64 @@ describe Underpass::ErrorParser do
         expect(result[:message]).to eq('Connection refused')
       end
     end
+
+    context 'with <strong> used as an inline label inside <p>' do
+      let(:html_body) do
+        <<~HTML
+          <html>
+          <body>
+          <p>The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.</p>
+          <p><strong style="color:#FF0000">Error</strong>: line 3: parse error: bbox requires four arguments </p>
+          </body>
+          </html>
+        HTML
+      end
+
+      it 'prefers the matching <p> over the <strong> label' do
+        result = described_class.parse(html_body, 400)
+
+        expect(result[:code]).to eq('syntax')
+        expect(result[:message]).to include('parse error: bbox requires four arguments')
+        expect(result[:details]).to eq({ line: 3 })
+      end
+    end
+
+    context 'with HTML entities in the error body' do
+      let(:html_body) do
+        <<~HTML
+          <html>
+          <body>
+          <p><strong style="color:#FF0000">Error</strong>: line 3: parse error: Unknown type &quot;nod&quot; </p>
+          </body>
+          </html>
+        HTML
+      end
+
+      it 'decodes HTML entities in the message' do
+        result = described_class.parse(html_body, 400)
+
+        expect(result[:message]).to include('Unknown type "nod"')
+        expect(result[:message]).not_to include('&quot;')
+      end
+
+      it 'still classifies the error and extracts the line number' do
+        result = described_class.parse(html_body, 400)
+
+        expect(result[:code]).to eq('syntax')
+        expect(result[:details]).to eq({ line: 3 })
+      end
+    end
+
+    context 'with a <strong>Error</strong> label and no useful <p>' do
+      let(:html_body) { '<html><body><strong>Error</strong></body></html>' }
+
+      it 'still returns a non-empty message via the <strong> fallback' do
+        result = described_class.parse(html_body, 400)
+
+        expect(result[:code]).to eq('unknown')
+        expect(result[:message]).not_to be_empty
+        expect(result[:message]).to include('Error')
+      end
+    end
   end
 end

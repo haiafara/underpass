@@ -420,6 +420,19 @@ rescue Underpass::ApiError => e
 end
 ```
 
+For syntax errors (the most common 400 from Overpass), the structured data is just as rich:
+
+```ruby
+begin
+  Underpass::QL::Query.perform_raw('nod["amenity"="cafe"];')
+rescue Underpass::ApiError => e
+  e.code           # => "syntax"
+  e.http_status    # => 400
+  e.error_message  # => "Error: line 3: parse error: Unknown type \"nod\""
+  e.details        # => { line: 3 }
+end
+```
+
 ### Error Codes
 
 | Code | Description | HTTP Status |
